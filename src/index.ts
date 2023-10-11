@@ -75,25 +75,9 @@ const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(
   helmetSrc,
   (gltf) => {
-    // Position the loaded content to overlay user's face
-
-    // 1. FACE HELMET (RACER)
-    // gltf.scene.position.set(0, -0.8, 0);
-    // gltf.scene.scale.set(2.3, 2.3, 2.3);
-    // gltf.scene.rotation.set(0, Math.PI, 0);
-
-    // 2. SUNGLASS
-    // but problem with other models
-    // gltf.scene.position.set(0, 0.21, 1);
-    // gltf.scene.scale.set(0.022, 0.022, 0.03);
-
-    // 3. CHEEK PAINT
-    // in face-mesh example
-
-    // 4. FULL HEAD COVER (ASTRONAUT HELMET)
-    // gltf.scene.position.set(0, -1, -0.35);
-    // gltf.scene.scale.set(0.06, 0.06, 0.1);
-
+    gltf.scene.scale.set(2, 2, 2);
+    gltf.scene.position.set(0, -0.7, 1);
+    gltf.scene.rotation.set(Math.PI / 2, 0, 0);
     console.log(gltf.scene);
     // Add the scene to the tracker group
     faceTrackerGroup.add(gltf.scene);
@@ -103,6 +87,22 @@ gltfLoader.load(
     console.log("An error ocurred loading the GLTF model");
   }
 );
+
+//--------BALL_CODE-----------
+
+// Create a random starting position for the ball
+const startX = Math.random() * 2 - 1; // Random horizontal position between -1 and 1
+const startY = 2; // Start the ball at the top of the screen
+const startZ = Math.random() * 2 - 1; // Random depth position between -1 and 1
+const speed = 0.01; // Adjust the speed as needed
+const trajectory = new THREE.Vector3(startX, startY, startZ);
+trajectory.normalize(); // Normalize the trajectory vector
+
+const ballGeometry = new THREE.SphereGeometry(5, 32, 32);
+const ballMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const ball = new THREE.Mesh(ballGeometry, ballMaterial);
+ball.position.set(startX, startY, startZ);
+scene.add(ball);
 
 // Let's add some lighting, first a directional light above the model pointing down
 const directionalLight = new THREE.DirectionalLight("white", 0.8);
@@ -147,6 +147,17 @@ function render(): void {
 
   // Update the head mask so it fits the user's head in this frame
   mask.updateFromFaceAnchorGroup(faceTrackerGroup);
+
+  //  // Update the ball's position
+  ball.position.add(trajectory.clone().multiplyScalar(speed));
+
+  // Check if the ball is out of view (e.g., reached the bottom of the screen)
+  if (ball.position.y < -1) {
+    // Reset the ball's position at the top of the screen with a new random trajectory
+    ball.position.set(startX, startY, startZ);
+    trajectory.set(Math.random() * 2 - 1, 2, Math.random() * 2 - 1);
+    trajectory.normalize();
+  }
 
   // Draw the ThreeJS scene in the usual way, but using the Zappar camera
   renderer.render(scene, camera);
