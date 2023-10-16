@@ -10,6 +10,7 @@
   "author": "Zappar Limited",
   "license": "MIT",
   "dependencies": {
+    "@tweenjs/tween.js": "^21.0.0",
     "@zappar/webgl-snapshot": "^1.1.1",
     "@zappar/zappar-threejs": "2.0.1",
     "three": "^0.137.0"
