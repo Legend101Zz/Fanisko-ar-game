@@ -538,11 +538,11 @@ var _zapparThreejs = require("@zappar/zappar-threejs");
 var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _tweenJs = require("@tweenjs/tween.js");
 var _tweenJsDefault = parcelHelpers.interopDefault(_tweenJs);
-const modelPath = new URL(require("4badf5169b62e80f")).href;
-const imagePath1 = new URL(require("ea1311a7bc2ace5f")).href;
-const imagePath2 = new URL(require("e94fae99144e5f47")).href;
-const imagePath3 = new URL(require("d5877e0fbaa190b5")).href;
-const imagePath4 = new URL(require("ec2a67de5fa0c9e7")).href;
+const modelPath = new URL(require("965078bf304453ea")).href;
+const imagePath1 = new URL(require("e2b74811ae22f680")).href;
+const imagePath2 = new URL(require("5432e2ffb25a1e0f")).href;
+const imagePath3 = new URL(require("93cdc0b4615c3fbf")).href;
+const imagePath4 = new URL(require("eb1194a91599337c")).href;
 if (_zapparThreejs.browserIncompatible()) {
     // The browserIncompatibleUI() function shows a full-page dialog that informs the user
     // they're using an unsupported browser, and provides a button to 'copy' the current page
@@ -568,7 +568,7 @@ let camera = new _zapparThreejs.Camera({
     rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
     userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
 });
-camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.CSS;
+camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
 _zapparThreejs.glContextSet(renderer.getContext());
 const scene = new _three.Scene();
 scene.background = camera.backgroundTexture;
@@ -623,13 +623,13 @@ const balls = []; // Array to store the ball objects
 const ballBoundingBoxes = [];
 for(let i = 0; i < 6; i++){
     const ball = new _three.Mesh(ballGeometry, ballMaterials[i % ballMaterials.length]);
-    ball.position.set(-0.7657464742660522 + 0.3 * i, 1.1671710297465325, -3.1538567543029785);
+    ball.position.set(-1.557464742660522 + 0.3 * i, 1.4671710297465324, -3.1538567543029785);
     ball.frustumCulled = false;
     scene.add(ball);
     // creating bounding boxes to check for collison
     const ballBoundingBox = new _three.Box3();
     ballBoundingBox.setFromObject(ball);
-    ballBoundingBox.expandByScalar(0.05); // Expand the bounding box a bit for accuracy
+    ballBoundingBox.expandByScalar(0.02); // Expand the bounding box a bit for accuracy
     ballBoundingBoxes.push(ballBoundingBox);
     ball.userData.index = i; // Store the index for later reference
     ball.addEventListener("click", ()=>{
@@ -637,6 +637,23 @@ for(let i = 0; i < 6; i++){
         throwCricketBall(ball);
     });
     balls.push(ball);
+}
+for(let i1 = 0; i1 < 6; i1++){
+    const ball1 = new _three.Mesh(ballGeometry, ballMaterials[i1 % ballMaterials.length]);
+    ball1.position.set(-0.9557464742660522 + 0.3 * i1, 1.0671710297465324, -3.1538567543029785);
+    ball1.frustumCulled = false;
+    scene.add(ball1);
+    // creating bounding boxes to check for collison
+    const ballBoundingBox1 = new _three.Box3();
+    ballBoundingBox1.setFromObject(ball1);
+    ballBoundingBox1.expandByScalar(0.02); // Expand the bounding box a bit for accuracy
+    ballBoundingBoxes.push(ballBoundingBox1);
+    ball1.userData.index = i1; // Store the index for later reference
+    ball1.addEventListener("click", ()=>{
+        console.log("started click");
+        throwCricketBall(ball1);
+    });
+    balls.push(ball1);
 }
 console.log(balls);
 // const loadingText = document.createElement('div')
@@ -660,6 +677,14 @@ console.log(balls);
 // arrow.style.transform = 'translateX(-50%)'
 // document.body.appendChild(arrow)
 // Create bounding boxes for the GLB model and balls
+// Create a directional light
+const directionalLight = new _three.DirectionalLight(0xffffff, 1.0); // Color: white, Intensity: 1.0
+directionalLight.position.set(1, 1, 1); // Set the position of the light
+scene.add(directionalLight);
+// You can further adjust the light properties, such as shadow casting and shadow resolution, based on your scene requirements.
+directionalLight.castShadow = true; // Enable shadow casting
+directionalLight.shadow.mapSize.width = 1024;
+directionalLight.shadow.mapSize.height = 1024;
 const gltfLoader = new (0, _gltfloader.GLTFLoader)(manager);
 const gloveModel = gltfLoader.load(modelPath, (gltf)=>{
     // setInterval(() => {
@@ -675,6 +700,8 @@ const gloveModel = gltfLoader.load(modelPath, (gltf)=>{
     gltf.scene.traverse(function(child) {
         if (child.isMesh) {
             let m = child;
+            child.castShadow = true;
+            child.receiveShadow = true;
             //m.castShadow = true
             m.frustumCulled = false;
         }
@@ -683,6 +710,7 @@ const gloveModel = gltfLoader.load(modelPath, (gltf)=>{
     updateBoundingBoxes = function() {
         // Update glove bounding box
         gloveBoundingBox.setFromObject(gltf.scene);
+        gloveBoundingBox.expandByScalar(0.003);
         // Update ball bounding boxes
         ballBoundingBoxes.forEach((boundingBox, index)=>{
             boundingBox.setFromObject(balls[index]);
@@ -713,6 +741,7 @@ const gloveModel = gltfLoader.load(modelPath, (gltf)=>{
             document.body.removeChild(scoreText);
         }, 2000); // Remove the score text after 2 seconds
     }
+    const removedBalls = [];
     // Collision detection
     checkCollisions = function() {
         console.log("checking for collisions");
@@ -727,9 +756,14 @@ const gloveModel = gltfLoader.load(modelPath, (gltf)=>{
                 faceTrackerGroup.add(ball);
                 // Call the score
                 showScoreText();
+                // Add the collided ball to the removedBalls array
+                removedBalls.push(index);
             }
         });
     };
+    removedBalls.forEach((index)=>{
+        balls.splice(index, 1);
+    });
     throwCricketBall = function(ball) {
         console.log("started random");
         // Change the ball's mass to 1 when it is thrown
@@ -767,16 +801,25 @@ const gloveModel = gltfLoader.load(modelPath, (gltf)=>{
         });
     };
     // Set an interval to throw balls periodically
-    setInterval(()=>{
-        const randomBallIndex = Math.floor(Math.random() * balls.length); // Select a random ball to throw
-        const randomBall = balls[randomBallIndex];
-        throwCricketBall(randomBall);
-    }, 5000);
+    // Define an interval ID variable
+    let throwInterval;
+    function throwRandomBall() {
+        if (balls.length > 0) {
+            console.log(balls.length, "index");
+            const randomBallIndex = Math.floor(Math.random() * balls.length);
+            const randomBall = balls[randomBallIndex];
+            throwCricketBall(randomBall);
+        }
+    }
+    throwInterval = setInterval(throwRandomBall, 5000);
     faceTrackerGroup.add(gltf.scene);
     modelReady = true;
 }, undefined, ()=>{
     console.log("An error ocurred loading the GLTF model");
 });
+// Add ambient light for overall illumination
+const ambientLight2 = new _three.AmbientLight(0x404040); // Soft white ambient light
+scene.add(ambientLight2);
 //animation on catching the ball
 // Function to calculate the center of the viewport
 function calculateCenterOfScreen() {
@@ -857,7 +900,7 @@ function render() {
 }
 animate();
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","@tweenjs/tween.js":"7DfAI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","4badf5169b62e80f":"djv5M","ea1311a7bc2ace5f":"9sMm2","e94fae99144e5f47":"6ZnIa","d5877e0fbaa190b5":"jotub","ec2a67de5fa0c9e7":"hmGTP"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","@tweenjs/tween.js":"7DfAI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","965078bf304453ea":"djv5M","e2b74811ae22f680":"9sMm2","5432e2ffb25a1e0f":"6ZnIa","93cdc0b4615c3fbf":"jotub","eb1194a91599337c":"hmGTP"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -32033,7 +32076,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("99b2aa9852557a87"));
+                let url = new URL(require("2cd7fb00fc8489e2"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -32043,7 +32086,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("99b2aa9852557a87"));
+                let url = new URL(require("2cd7fb00fc8489e2"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -32053,7 +32096,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("e7e8e4eccc392b72"));
+                let url = new URL(require("88dcff9febca54a1"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -32148,14 +32191,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("647bb510db0ab32e"));
+        let url = new URL(require("cd93dfdb1b2d8cf5"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","99b2aa9852557a87":"htM1Y","e7e8e4eccc392b72":"e04H3","647bb510db0ab32e":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","2cd7fb00fc8489e2":"htM1Y","88dcff9febca54a1":"e04H3","cd93dfdb1b2d8cf5":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39696,10 +39739,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("822bc39f59b531b5"));
+        if (!worker) worker = new Worker(require("4615ccaf54c91d7c"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("9239999e4705c63f")).toString()
+            url: new URL(require("222dbe0050287c11")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39725,7 +39768,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","822bc39f59b531b5":"35JNJ","9239999e4705c63f":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","4615ccaf54c91d7c":"35JNJ","222dbe0050287c11":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);

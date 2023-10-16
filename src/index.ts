@@ -38,7 +38,7 @@ let camera = new ZapparThree.Camera({
   rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
   userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM=",
 });
-camera.userCameraMirrorMode = ZapparThree.CameraMirrorMode.CSS;
+camera.userCameraMirrorMode = ZapparThree.CameraMirrorMode.Poses;
 ZapparThree.glContextSet(renderer.getContext());
 const scene = new THREE.Scene();
 scene.background = camera.backgroundTexture;
@@ -109,8 +109,8 @@ for (let i = 0; i < 6; i++) {
     ballMaterials[i % ballMaterials.length]
   );
   ball.position.set(
-    -0.7657464742660522 + 0.3 * i,
-    0.66717102974653244 + 0.5,
+    -1.557464742660522 + 0.3 * i,
+    0.66717102974653244 + 0.8,
     -3.1538567543029785
   );
   ball.frustumCulled = false;
@@ -118,7 +118,34 @@ for (let i = 0; i < 6; i++) {
   // creating bounding boxes to check for collison
   const ballBoundingBox = new THREE.Box3();
   ballBoundingBox.setFromObject(ball);
-  ballBoundingBox.expandByScalar(0.05); // Expand the bounding box a bit for accuracy
+  ballBoundingBox.expandByScalar(0.02); // Expand the bounding box a bit for accuracy
+
+  ballBoundingBoxes.push(ballBoundingBox);
+
+  ball.userData.index = i; // Store the index for later reference
+  ball.addEventListener("click", () => {
+    console.log("started click");
+    throwCricketBall(ball);
+  });
+  balls.push(ball);
+}
+
+for (let i = 0; i < 6; i++) {
+  const ball = new THREE.Mesh(
+    ballGeometry,
+    ballMaterials[i % ballMaterials.length]
+  );
+  ball.position.set(
+    -0.9557464742660522 + 0.3 * i,
+    0.26717102974653244 + 0.8,
+    -3.1538567543029785
+  );
+  ball.frustumCulled = false;
+  scene.add(ball);
+  // creating bounding boxes to check for collison
+  const ballBoundingBox = new THREE.Box3();
+  ballBoundingBox.setFromObject(ball);
+  ballBoundingBox.expandByScalar(0.02); // Expand the bounding box a bit for accuracy
 
   ballBoundingBoxes.push(ballBoundingBox);
 
@@ -156,6 +183,16 @@ console.log(balls);
 
 // Create bounding boxes for the GLB model and balls
 
+// Create a directional light
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); // Color: white, Intensity: 1.0
+directionalLight.position.set(1, 1, 1); // Set the position of the light
+scene.add(directionalLight);
+
+// You can further adjust the light properties, such as shadow casting and shadow resolution, based on your scene requirements.
+directionalLight.castShadow = true; // Enable shadow casting
+directionalLight.shadow.mapSize.width = 1024;
+directionalLight.shadow.mapSize.height = 1024;
+
 const gltfLoader = new GLTFLoader(manager);
 const gloveModel = gltfLoader.load(
   modelPath,
@@ -175,7 +212,8 @@ const gloveModel = gltfLoader.load(
     gltf.scene.traverse(function (child) {
       if ((child as THREE.Mesh).isMesh) {
         let m = child as THREE.Mesh;
-
+        child.castShadow = true;
+        child.receiveShadow = true;
         //m.castShadow = true
         m.frustumCulled = false;
       }
@@ -185,6 +223,7 @@ const gloveModel = gltfLoader.load(
     updateBoundingBoxes = function () {
       // Update glove bounding box
       gloveBoundingBox.setFromObject(gltf.scene);
+      gloveBoundingBox.expandByScalar(0.003);
 
       // Update ball bounding boxes
       ballBoundingBoxes.forEach((boundingBox, index) => {
@@ -219,10 +258,11 @@ const gloveModel = gltfLoader.load(
         document.body.removeChild(scoreText);
       }, 2000); // Remove the score text after 2 seconds
     }
-
+    const removedBalls: any = [];
     // Collision detection
     checkCollisions = function () {
       console.log("checking for collisions");
+
       // Check for collisions between glove and balls
       ballBoundingBoxes.forEach((ballBoundingBox, index) => {
         if (gloveBoundingBox.intersectsBox(ballBoundingBox)) {
@@ -235,9 +275,15 @@ const gloveModel = gltfLoader.load(
           faceTrackerGroup.add(ball);
           // Call the score
           showScoreText();
+          // Add the collided ball to the removedBalls array
+          removedBalls.push(index);
         }
       });
     };
+
+    removedBalls.forEach((index: any) => {
+      balls.splice(index, 1);
+    });
 
     throwCricketBall = function (
       ball: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>
@@ -293,15 +339,22 @@ const gloveModel = gltfLoader.load(
     };
 
     // Set an interval to throw balls periodically
+    // Define an interval ID variable
+    let throwInterval;
 
-    setInterval(() => {
-      const randomBallIndex = Math.floor(Math.random() * balls.length); // Select a random ball to throw
-      const randomBall = balls[randomBallIndex] as THREE.Mesh<
-        THREE.SphereGeometry,
-        THREE.MeshBasicMaterial
-      >;
-      throwCricketBall(randomBall);
-    }, 5000);
+    function throwRandomBall() {
+      if (balls.length > 0) {
+        console.log(balls.length, "index");
+        const randomBallIndex = Math.floor(Math.random() * balls.length);
+        const randomBall = balls[randomBallIndex] as THREE.Mesh<
+          THREE.SphereGeometry,
+          THREE.MeshBasicMaterial
+        >;
+        throwCricketBall(randomBall);
+      }
+    }
+
+    throwInterval = setInterval(throwRandomBall, 5000);
 
     faceTrackerGroup.add(gltf.scene);
     modelReady = true;
@@ -311,6 +364,10 @@ const gloveModel = gltfLoader.load(
     console.log("An error ocurred loading the GLTF model");
   }
 );
+
+// Add ambient light for overall illumination
+const ambientLight2 = new THREE.AmbientLight(0x404040); // Soft white ambient light
+scene.add(ambientLight2);
 
 //animation on catching the ball
 
