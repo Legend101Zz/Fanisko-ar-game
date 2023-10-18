@@ -238,6 +238,7 @@ const gloveModel = gltfLoader.load(
       ballBoundingBoxes.forEach((boundingBox, index) => {
         if (balls[index].userData.hit == 1)
           boundingBox.setFromObject(balls[index]);
+        console.log("ballBounding", ballBoundingBoxes, balls);
       });
     };
 
@@ -269,7 +270,7 @@ const gloveModel = gltfLoader.load(
         document.body.removeChild(scoreText);
       }, 2000); // Remove the score text after 2 seconds
     }
-    const removedBalls: any = [];
+
     // Collision detection
     checkCollisions = function () {
       console.log("checking for collisions");
@@ -283,7 +284,7 @@ const gloveModel = gltfLoader.load(
 
           const ball = balls[index];
           ball.visible = false;
-          faceTrackerGroup.add(ball);
+
           // Call the score
           showScoreText();
           // Add the collided ball to the removedBalls array
@@ -476,22 +477,31 @@ function animate() {
     checkCollisions(); // Check for collisions
     // Update bounding boxes' positions
     updateBoundingBoxes();
-    if (balls.length > 0) {
-      balls = balls.filter((ball) => {
-        if (ball && ball.userData && typeof ball.userData.hit !== "undefined") {
-          if (ball.userData.hit === 0) {
-            // Remove the ball from the scene
-            scene.remove(ball);
-            // Remove the ball's bounding box from the array
-            ballBoundingBoxes.splice(ball.userData.index, 1);
-            // Update the 'hit' status for that ball to indicate it has been removed
-            ball.userData.hit = -1;
-            return false; // Filter out this ball
-          }
+    console.log("balls.length", balls.length);
+
+    // Create a new array to store the balls that will be kept
+    const newBalls = [];
+
+    for (let i = 0; i < balls.length; i++) {
+      const ball = balls[i];
+
+      if (ball && ball.userData && typeof ball.userData.hit !== "undefined") {
+        if (ball.userData.hit === 0) {
+          // Remove the ball from the scene
+          scene.remove(ball);
+          // Remove the ball's bounding box from the array
+          ballBoundingBoxes.splice(ball.userData.index, 1);
+          // Update the 'hit' status for that ball to indicate it has been removed
+          ball.userData.hit = -1;
+        } else {
+          // Keep the ball
+          newBalls.push(ball);
         }
-        return true; // Keep this ball
-      });
+      }
     }
+
+    // Replace the old 'balls' array with the new one
+    balls = newBalls;
   }
   //cannonDebugRenderer.update()
   camera.updateFrame(renderer);
