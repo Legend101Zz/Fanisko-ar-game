@@ -57,7 +57,7 @@ const faceTracker = new ZapparThree.FaceTrackerLoader(manager).load();
 const faceTrackerGroup = new ZapparThree.FaceAnchorGroup(camera, faceTracker);
 // Add our face tracker group into the ThreeJS scene
 scene.add(faceTrackerGroup);
-
+console.log("just");
 // Start with the content group invisible
 faceTrackerGroup.visible = false;
 
@@ -110,10 +110,11 @@ for (let i = 0; i < 6; i++) {
   );
   ball.position.set(
     -1.557464742660522 + 0.3 * i,
-    0.66717102974653244 + 0.8,
+    0.66717102974653244 + 2,
     -3.1538567543029785
   );
   ball.frustumCulled = false;
+  //ball.visible = false;
   scene.add(ball);
   // creating bounding boxes to check for collison
   const ballBoundingBox = new THREE.Box3();
@@ -123,10 +124,7 @@ for (let i = 0; i < 6; i++) {
   ballBoundingBoxes.push(ballBoundingBox);
 
   ball.userData.index = i; // Store the index for later reference
-  ball.addEventListener("click", () => {
-    console.log("started click");
-    throwCricketBall(ball);
-  });
+
   balls.push(ball);
 }
 
@@ -137,10 +135,11 @@ for (let i = 0; i < 6; i++) {
   );
   ball.position.set(
     -0.9557464742660522 + 0.3 * i,
-    0.26717102974653244 + 0.8,
+    0.26717102974653244 + 2,
     -3.1538567543029785
   );
   ball.frustumCulled = false;
+  //ball.visible = false;
   scene.add(ball);
   // creating bounding boxes to check for collison
   const ballBoundingBox = new THREE.Box3();
@@ -150,10 +149,7 @@ for (let i = 0; i < 6; i++) {
   ballBoundingBoxes.push(ballBoundingBox);
 
   ball.userData.index = i; // Store the index for later reference
-  ball.addEventListener("click", () => {
-    console.log("started click");
-    throwCricketBall(ball);
-  });
+
   balls.push(ball);
 }
 
@@ -205,7 +201,7 @@ const gloveModel = gltfLoader.load(
     gltf.scene.scale.set(2, 2, 2);
     gltf.scene.position.set(0, -0.7, 1);
     gltf.scene.rotation.set(Math.PI / 2, 0, 0);
-    console.log("model_here", gltf.scene);
+    console.log("model_here,11", gltf.scene);
     gltf.scene.name = "glove";
 
     // Add the scene to the tracker group
@@ -289,7 +285,7 @@ const gloveModel = gltfLoader.load(
       ball: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>
     ) {
       console.log("started random");
-
+      ball.visible = true;
       // Change the ball's mass to 1 when it is thrown
 
       console.log("ball is thrown");
