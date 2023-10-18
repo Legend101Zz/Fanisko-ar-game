@@ -236,8 +236,8 @@ const gloveModel = gltfLoader.load(
 
       // Update ball bounding boxes
       ballBoundingBoxes.forEach((boundingBox, index) => {
-        // if (balls[index].userData.hit == 1)
-        boundingBox.setFromObject(balls[index]);
+        if (balls[index].userData.hit == 1)
+          boundingBox.setFromObject(balls[index]);
       });
     };
 
@@ -288,6 +288,7 @@ const gloveModel = gltfLoader.load(
           showScoreText();
           // Add the collided ball to the removedBalls array
           ball.userData.hit = 0;
+
           // removedBalls.push(index);
           // removedBalls.forEach((index: any) => {
           //   balls.splice(index, 1);
@@ -322,7 +323,7 @@ const gloveModel = gltfLoader.load(
         y: gltf.scene.position.y - 1,
         z: ball.position.z + randomZ,
       }; // Target position
-      const throwDuration = 2000; // Animation duration in milliseconds
+      const throwDuration = 3500; // Animation duration in milliseconds
       const bounceHeight = 1;
 
       new TWEEN.Tween(initialPosition)
@@ -344,7 +345,7 @@ const gloveModel = gltfLoader.load(
             .to({ x: e.x, y: bounceHeight, z: e.z }, throwDuration / 2)
             .easing(TWEEN.Easing.Bounce.Out)
             .onComplete(() => {
-              playerMissedBall();
+              if (ball.userData.hit == 1) playerMissedBall();
               console.log("bounce");
             });
           bounceAnimation.start();
@@ -475,22 +476,22 @@ function animate() {
     checkCollisions(); // Check for collisions
     // Update bounding boxes' positions
     updateBoundingBoxes();
-    // if (balls.length > 0) {
-    //   balls = balls.filter((ball) => {
-    //     if (ball && ball.userData) {
-    //       if (ball.userData.hit === 0) {
-    //         // Remove the ball from the scene
-    //         scene.remove(ball);
-    //         // Remove the ball's bounding box from the array
-    //         ballBoundingBoxes.splice(ball.userData.index, 1);
-    //         // Update the 'hit' status for that ball to indicate it has been removed
-    //         ball.userData.hit = -1;
-    //         return false; // Filter out this ball
-    //       }
-    //     }
-    //     return true; // Keep this ball
-    //   });
-    // }
+    if (balls.length > 0) {
+      balls = balls.filter((ball) => {
+        if (ball && ball.userData && typeof ball.userData.hit !== "undefined") {
+          if (ball.userData.hit === 0) {
+            // Remove the ball from the scene
+            scene.remove(ball);
+            // Remove the ball's bounding box from the array
+            ballBoundingBoxes.splice(ball.userData.index, 1);
+            // Update the 'hit' status for that ball to indicate it has been removed
+            ball.userData.hit = -1;
+            return false; // Filter out this ball
+          }
+        }
+        return true; // Keep this ball
+      });
+    }
   }
   //cannonDebugRenderer.update()
   camera.updateFrame(renderer);
