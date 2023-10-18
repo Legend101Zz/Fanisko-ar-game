@@ -44,24 +44,25 @@ html, body {
 .wrapper {
   width: 100%;
   height: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
   position: relative;
   overflow-x: hidden;
 }
 
 .card {
-  width: 350px;
+  width: 87%;
+  height: 87%;
   will-change: left;
   -webkit-user-select: none;
   user-select: none;
   -o-user-select: none;
   background-color: #fff;
-  border-radius: 15px;
+  border-radius: 0;
   margin: 0 auto;
   transition: left .5s ease-out;
   display: block;
-  position: absolute;
-  top: 25px;
-  transform: translateX(-50%);
   box-shadow: 0 30px 50px #0003;
 }
 
@@ -74,7 +75,7 @@ html, body {
 }
 
 .card__header {
-  height: 170px;
+  height: 72%;
   color: #fff;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
@@ -96,6 +97,9 @@ html, body {
 
 .card__watermark {
   width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
   position: absolute;
   bottom: 10px;
   left: 0;
@@ -108,13 +112,13 @@ html, body {
   text-transform: uppercase;
   font-size: 240px;
   font-weight: 700;
-  position: relative;
-  left: -20px;
 }
 
 .card__logo {
-  width: 50px;
+  width: 50%;
   height: auto;
+  margin-left: 50%;
+  transform: translateX(-50%);
 }
 
 .card__price {
@@ -124,16 +128,17 @@ html, body {
 }
 
 .card__title {
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin: 35px 0 20px;
-  font-size: 15px;
+  text-align: center;
+  letter-spacing: 4px;
+  font-size: 4rem;
   line-height: 1.1em;
 }
 
 .card__subtitle {
-  font-size: 13px;
-  font-weight: 300;
+  text-align: center;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 500;
   display: block;
 }
 

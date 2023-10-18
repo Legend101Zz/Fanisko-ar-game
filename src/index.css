@@ -49,20 +49,27 @@ body {
   overflow-x: hidden;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .card {
   display: block;
-  position: absolute;
-  top: 25px;
+  /* position: absolute; */
+  /* top: 0;  */
+  /* Adjust top to start from the top of the screen */
+  /* left: 0; */
+  /* Set left to 0 to fill the entire width */
   margin: 0 auto;
-  width: 350px;
+  width: 87%; /* Make it take the full screen width */
+  height: 87%;
   background-color: #fff;
-  border-radius: 15px;
+  border-radius: 0; /* Remove border-radius to make it rectangular */
 
   box-shadow: 0 30 50 rgba(0, 0, 0, 0.2);
 
-  transform: translateX(-50%);
+  /* transform: translateX(-50%); */
   transition: left 0.5s ease-out;
   will-change: left;
 
@@ -84,7 +91,7 @@ body {
 
 .card__header {
   position: relative;
-  height: 170px;
+  height: 72%;
   padding: 30px 30px 300px;
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
@@ -121,12 +128,15 @@ body {
   bottom: 10px;
   left: 0;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .card__watermark::after {
   content: attr(data-watermark);
-  position: relative;
-  left: -20px;
+  /* position: relative;
+  left: -20px; */
   color: rgba(0, 0, 0, 0.3);
   font-size: 240px;
   font-weight: 700;
@@ -134,8 +144,11 @@ body {
 }
 
 .card__logo {
-  width: 50px;
+  width: 50%;
   height: auto;
+  /* margin: 0 auto; */
+  margin-left: 50%;
+  transform: translateX(-50%);
 }
 
 .card__price {
@@ -145,17 +158,23 @@ body {
 }
 
 .card__title {
-  margin: 35px 0 20px;
+  /* margin: 35px 0 20px;
   font-size: 15px;
   line-height: 1.1em;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.5px; */
+  font-size: 4rem;
+  text-align: center;
+  line-height: 1.1em;
+  letter-spacing: 4px;
 }
 
 .card__subtitle {
   display: block;
-  font-size: 13px;
-  font-weight: 300;
+  font-size: 1rem;
+  text-align: center;
+  font-weight: 500;
+  font-style: italic;
 }
 
 .card__body {
