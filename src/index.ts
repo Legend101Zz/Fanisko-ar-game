@@ -114,7 +114,7 @@ for (let i = 0; i < 6; i++) {
     -3.1538567543029785
   );
   ball.frustumCulled = false;
-  //ball.visible = false;
+  ball.visible = false;
   scene.add(ball);
   // creating bounding boxes to check for collison
   const ballBoundingBox = new THREE.Box3();
@@ -139,7 +139,7 @@ for (let i = 0; i < 6; i++) {
     -3.1538567543029785
   );
   ball.frustumCulled = false;
-  //ball.visible = false;
+  ball.visible = false;
   scene.add(ball);
   // creating bounding boxes to check for collison
   const ballBoundingBox = new THREE.Box3();
@@ -323,6 +323,7 @@ const gloveModel = gltfLoader.load(
         .start()
         .onComplete((e) => {
           // Animation complete, you can add further actions here
+          ball.visible = false;
           console.log("ball thrown", e);
           const bounceAnimation = new TWEEN.Tween(ball.position)
             .to({ x: e.x, y: bounceHeight, z: e.z }, throwDuration / 2)

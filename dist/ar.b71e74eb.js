@@ -626,7 +626,7 @@ for(let i = 0; i < 6; i++){
     const ball = new _three.Mesh(ballGeometry, ballMaterials[i % ballMaterials.length]);
     ball.position.set(-1.557464742660522 + 0.3 * i, 2.6671710297465325, -3.1538567543029785);
     ball.frustumCulled = false;
-    //ball.visible = false;
+    ball.visible = false;
     scene.add(ball);
     // creating bounding boxes to check for collison
     const ballBoundingBox = new _three.Box3();
@@ -640,7 +640,7 @@ for(let i1 = 0; i1 < 6; i1++){
     const ball1 = new _three.Mesh(ballGeometry, ballMaterials[i1 % ballMaterials.length]);
     ball1.position.set(-0.9557464742660522 + 0.3 * i1, 2.2671710297465326, -3.1538567543029785);
     ball1.frustumCulled = false;
-    //ball.visible = false;
+    ball1.visible = false;
     scene.add(ball1);
     // creating bounding boxes to check for collison
     const ballBoundingBox1 = new _three.Box3();
@@ -785,6 +785,7 @@ const gloveModel = gltfLoader.load(modelPath, (gltf)=>{
             ball.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
         }).start().onComplete((e)=>{
             // Animation complete, you can add further actions here
+            ball.visible = false;
             console.log("ball thrown", e);
             const bounceAnimation = new (0, _tweenJsDefault.default).Tween(ball.position).to({
                 x: e.x,
