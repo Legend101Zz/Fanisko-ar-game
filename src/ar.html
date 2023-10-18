@@ -9,6 +9,17 @@
         overflow: hidden;
         margin: 0px;
       }
+      .life-icons {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+      }
+
+      .life-icons img {
+        width: 30px;
+        margin: 0 5px;
+      }
     </style>
   </head>
 
@@ -19,6 +30,12 @@
       height="200"
       style="position: absolute; top: 0; left: 0"
     ></canvas>
+
+    <div class="life-icons">
+      <img src="../assets/life.png" alt="Life" id="life1" />
+      <img src="../assets/life.png" alt="Life" id="life2" />
+      <img src="../assets/life.png" alt="Life" id="life3" />
+    </div>
 
     <script type="module" src="index.ts"></script>
   </body>

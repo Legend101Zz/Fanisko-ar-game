@@ -100,7 +100,7 @@ const ballMaterials = cricketBallTextures.map(
   (texture) => new THREE.MeshBasicMaterial({ map: texture })
 );
 
-const balls: THREE.Object3D<THREE.Event>[] = []; // Array to store the ball objects
+let balls: THREE.Object3D<THREE.Event>[] = []; // Array to store the ball objects
 const ballBoundingBoxes: THREE.Box3[] = [];
 
 for (let i = 0; i < 6; i++) {
@@ -109,7 +109,7 @@ for (let i = 0; i < 6; i++) {
     ballMaterials[i % ballMaterials.length]
   );
   ball.position.set(
-    -1.557464742660522 + 0.3 * i,
+    -0.757464742660522 + 0.3 * i,
     0.66717102974653244 + 2,
     -3.1538567543029785
   );
@@ -124,32 +124,7 @@ for (let i = 0; i < 6; i++) {
   ballBoundingBoxes.push(ballBoundingBox);
 
   ball.userData.index = i; // Store the index for later reference
-
-  balls.push(ball);
-}
-
-for (let i = 0; i < 6; i++) {
-  const ball = new THREE.Mesh(
-    ballGeometry,
-    ballMaterials[i % ballMaterials.length]
-  );
-  ball.position.set(
-    -0.9557464742660522 + 0.3 * i,
-    0.26717102974653244 + 2,
-    -3.1538567543029785
-  );
-  ball.frustumCulled = false;
-  ball.visible = false;
-  scene.add(ball);
-  // creating bounding boxes to check for collison
-  const ballBoundingBox = new THREE.Box3();
-  ballBoundingBox.setFromObject(ball);
-  ballBoundingBox.expandByScalar(0.02); // Expand the bounding box a bit for accuracy
-
-  ballBoundingBoxes.push(ballBoundingBox);
-
-  ball.userData.index = i; // Store the index for later reference
-
+  ball.userData.hit = 1;
   balls.push(ball);
 }
 
@@ -180,9 +155,47 @@ console.log(balls);
 // Create bounding boxes for the GLB model and balls
 
 // Create a directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); // Color: white, Intensity: 1.0
-directionalLight.position.set(1, 1, 1); // Set the position of the light
+// Create a directional light
+const directionalLight = new THREE.DirectionalLight(0xffffff, 5.0); // Color: white, Intensity: 1.0
+
+// Set the position of the light to your specified location
+directionalLight.position.set(
+  -0.9557464742660522,
+  0.26717102974653244,
+  -3.1538567543029785
+);
+
+// Add the directional light to your scene
 scene.add(directionalLight);
+
+//-----CODE--FOR---GAME----LOGIC
+
+// Variables to keep track of player lives
+let playerLives: number = 3; // Start with 3 lives
+
+// Function to update the life icons
+function updateLifeIcons(): void {
+  for (let i = 1; i <= 3; i++) {
+    const lifeIcon: HTMLElement | null = document.getElementById(`life${i}`);
+    if (lifeIcon) {
+      if (i <= playerLives) {
+        lifeIcon.style.display = "block";
+      } else {
+        lifeIcon.style.display = "none";
+      }
+    }
+  }
+}
+
+// Call this function when the player misses the ball to reduce a life
+function playerMissedBall(): void {
+  playerLives--; // Reduce the number of lives
+  updateLifeIcons(); // Update the displayed life icons
+  if (playerLives === 0) {
+    // Game over logic (you can implement it here)
+    console.log("Game over");
+  }
+}
 
 // You can further adjust the light properties, such as shadow casting and shadow resolution, based on your scene requirements.
 directionalLight.castShadow = true; // Enable shadow casting
@@ -223,6 +236,7 @@ const gloveModel = gltfLoader.load(
 
       // Update ball bounding boxes
       ballBoundingBoxes.forEach((boundingBox, index) => {
+        // if (balls[index].userData.hit == 1)
         boundingBox.setFromObject(balls[index]);
       });
     };
@@ -230,8 +244,9 @@ const gloveModel = gltfLoader.load(
     // HTML element to display the score
     const scoreElement = document.createElement("div");
     scoreElement.innerText = "Score: 0";
+    scoreElement.style.fontSize = "30px";
     scoreElement.style.position = "absolute";
-    scoreElement.style.color = "white";
+    scoreElement.style.color = "black";
     scoreElement.style.top = "10px";
     scoreElement.style.left = "10px";
     document.body.appendChild(scoreElement);
@@ -272,14 +287,14 @@ const gloveModel = gltfLoader.load(
           // Call the score
           showScoreText();
           // Add the collided ball to the removedBalls array
-          removedBalls.push(index);
+          ball.userData.hit = 0;
+          // removedBalls.push(index);
+          // removedBalls.forEach((index: any) => {
+          //   balls.splice(index, 1);
+          // });
         }
       });
     };
-
-    removedBalls.forEach((index: any) => {
-      balls.splice(index, 1);
-    });
 
     throwCricketBall = function (
       ball: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>
@@ -329,6 +344,7 @@ const gloveModel = gltfLoader.load(
             .to({ x: e.x, y: bounceHeight, z: e.z }, throwDuration / 2)
             .easing(TWEEN.Easing.Bounce.Out)
             .onComplete(() => {
+              playerMissedBall();
               console.log("bounce");
             });
           bounceAnimation.start();
@@ -347,6 +363,7 @@ const gloveModel = gltfLoader.load(
           THREE.SphereGeometry,
           THREE.MeshBasicMaterial
         >;
+
         throwCricketBall(randomBall);
       }
     }
@@ -409,29 +426,29 @@ function playFirecrackerAnimation() {
 const ambientLight = new THREE.AmbientLight("white", 0.4);
 scene.add(ambientLight);
 
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+// const raycaster = new THREE.Raycaster();
+// const mouse = new THREE.Vector2();
 
-// Add a click event listener to the renderer
-renderer.domElement.addEventListener("click", onDocumentClick, false);
+// // Add a click event listener to the renderer
+// renderer.domElement.addEventListener("click", onDocumentClick, false);
 
-function onDocumentClick(event: MouseEvent) {
-  // Calculate the mouse coordinates (0 to 1) in the canvas
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+// function onDocumentClick(event: MouseEvent) {
+//   // Calculate the mouse coordinates (0 to 1) in the canvas
+//   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+//   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  // Update the raycaster with the mouse position
-  raycaster.setFromCamera(mouse, camera);
+//   // Update the raycaster with the mouse position
+//   raycaster.setFromCamera(mouse, camera);
 
-  // Calculate intersections
-  const intersects = raycaster.intersectObjects(balls);
+//   // Calculate intersections
+//   const intersects = raycaster.intersectObjects(balls);
 
-  // Check if any balls were clicked
-  if (intersects.length > 0) {
-    const clickedBall: any = intersects[0].object;
-    if (throwCricketBall) throwCricketBall(clickedBall);
-  }
-}
+//   // Check if any balls were clicked
+//   if (intersects.length > 0) {
+//     const clickedBall: any = intersects[0].object;
+//     if (throwCricketBall) throwCricketBall(clickedBall);
+//   }
+// }
 
 const clock = new THREE.Clock();
 let delta;
@@ -453,14 +470,33 @@ function animate() {
     }
   });
   delta = Math.min(clock.getDelta(), 0.1);
+
   if (modelReady) {
     checkCollisions(); // Check for collisions
-    updateBoundingBoxes(); // Update bounding boxes' positions
+    // Update bounding boxes' positions
+    updateBoundingBoxes();
+    // if (balls.length > 0) {
+    //   balls = balls.filter((ball) => {
+    //     if (ball && ball.userData) {
+    //       if (ball.userData.hit === 0) {
+    //         // Remove the ball from the scene
+    //         scene.remove(ball);
+    //         // Remove the ball's bounding box from the array
+    //         ballBoundingBoxes.splice(ball.userData.index, 1);
+    //         // Update the 'hit' status for that ball to indicate it has been removed
+    //         ball.userData.hit = -1;
+    //         return false; // Filter out this ball
+    //       }
+    //     }
+    //     return true; // Keep this ball
+    //   });
+    // }
   }
   //cannonDebugRenderer.update()
   camera.updateFrame(renderer);
   mask.updateFromFaceAnchorGroup(faceTrackerGroup);
   TWEEN.update();
+
   render();
 }
 
