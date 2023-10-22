@@ -19,6 +19,14 @@ window.addEventListener("load", () => {
 
   gameModal.show();
 });
+//@ts-ignore
+document.querySelector(".start-game").addEventListener("click", (e) => {
+  //hide the start modal
+  gameModal.hide();
+  // show the hiddenStart elements
+
+  init();
+});
 
 const init = () => {
   if (ZapparThree.browserIncompatible()) {

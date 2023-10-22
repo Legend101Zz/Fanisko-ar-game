@@ -550,6 +550,13 @@ window.addEventListener("load", ()=>{
     //on page load , open the login modal
     gameModal.show();
 });
+//@ts-ignore
+document.querySelector(".start-game").addEventListener("click", (e)=>{
+    //hide the start modal
+    gameModal.hide();
+    // show the hiddenStart elements
+    init();
+});
 const init = ()=>{
     if (_zapparThreejs.browserIncompatible()) {
         // The browserIncompatibleUI() function shows a full-page dialog that informs the user
