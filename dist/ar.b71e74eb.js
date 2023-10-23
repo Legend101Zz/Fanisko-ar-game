@@ -784,6 +784,21 @@ const init = ()=>{
             //console.log("ballBounding", ballBoundingBoxes, balls);
             });
         };
+        const fogTrailMaterial = new _three.MeshBasicMaterial({
+            color: 0x888888,
+            transparent: true,
+            opacity: 0.09,
+            depthWrite: false
+        });
+        let fogTrailObjects = []; // Array to store fog trail objects
+        // Function to create fog at a specific position
+        function createFogTrail(position) {
+            const fogGeometry = new _three.SphereGeometry(0.1, 16, 16); // Adjust size as needed
+            const fogObject = new _three.Mesh(fogGeometry, fogTrailMaterial);
+            fogObject.position.copy(position);
+            scene.add(fogObject);
+            fogTrailObjects.push(fogObject);
+        }
         throwCricketBall = function(ball) {
             //console.log("started random");
             ball.visible = true;
@@ -808,8 +823,13 @@ const init = ()=>{
             const bounceHeight = 1;
             new (0, _tweenJsDefault.default).Tween(initialPosition).to(targetPosition, throwDuration).easing((0, _tweenJsDefault.default).Easing.Quadratic.Out).onUpdate(()=>{
                 ball.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
+                // Create fog trail at the ball's position
+                createFogTrail(new _three.Vector3(initialPosition.x, initialPosition.y, initialPosition.z));
             }).start().onComplete((e)=>{
-                // Animation complete, you can add further actions here
+                setTimeout(()=>{
+                    for (const fogObject of fogTrailObjects)scene.remove(fogObject);
+                    fogTrailObjects = []; // Clear the array
+                }, 20); // Animation complete, you can add further actions here
                 ball.visible = false;
                 //console.log("ball thrown", e);
                 const bounceAnimation = new (0, _tweenJsDefault.default).Tween(ball.position).to({
