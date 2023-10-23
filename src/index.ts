@@ -44,6 +44,7 @@ const init = () => {
   let checkCollisions: () => void;
   let throwCricketBall: (obj: any) => void;
   let modelReady = false;
+  let score = 0;
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
@@ -213,7 +214,7 @@ const init = () => {
     updateLifeIcons(); // Update the displayed life icons
     if (playerLives === 0) {
       // Game over logic (you can implement it here)
-      console.log("Game over");
+      displayGameOverModal(score);
     }
   }
 
@@ -259,7 +260,7 @@ const init = () => {
       scoreElement.style.left = "10px";
       document.body.appendChild(scoreElement);
       // Define a variable to keep track of the score
-      let score = 0;
+
       let scoreDisplayTimeout = null;
 
       function showScoreText() {
@@ -450,32 +451,55 @@ const init = () => {
   const ambientLight = new THREE.AmbientLight("white", 0.4);
   scene.add(ambientLight);
 
-  // const raycaster = new THREE.Raycaster();
-  // const mouse = new THREE.Vector2();
-
-  // // Add a click event listener to the renderer
-  // renderer.domElement.addEventListener("click", onDocumentClick, false);
-
-  // function onDocumentClick(event: MouseEvent) {
-  //   // Calculate the mouse coordinates (0 to 1) in the canvas
-  //   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  //   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  //   // Update the raycaster with the mouse position
-  //   raycaster.setFromCamera(mouse, camera);
-
-  //   // Calculate intersections
-  //   const intersects = raycaster.intersectObjects(balls);
-
-  //   // Check if any balls were clicked
-  //   if (intersects.length > 0) {
-  //     const clickedBall: any = intersects[0].object;
-  //     if (throwCricketBall) throwCricketBall(clickedBall);
-  //   }
-  // }
-
   const clock = new THREE.Clock();
   let delta;
+
+  //============GAME-END-LOGIC============
+
+  // Add these functions for displaying the modals:
+  function displayGameOverModal(finalScore: number) {
+    //@ts-ignore
+    const gameOverModal = new bootstrap.Modal(
+      document.getElementById("gameOverModal")
+    );
+    const gameOverScore = document.getElementById("gameOverScore");
+    if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
+    gameOverModal.show();
+  }
+
+  function displayWinnerModal(finalScore: number) {
+    //@ts-ignore
+    const winnerModal = new bootstrap.Modal(
+      document.getElementById("winnerModal")
+    );
+    const winnerScore = document.getElementById("winnerScore");
+    if (winnerScore) winnerScore.textContent = `Your Score: ${finalScore}`;
+    winnerModal.show();
+  }
+  function checkWinCondition() {
+    if (balls.length === 0) {
+      // Player has caught all the balls
+      displayWinnerModal(score);
+    }
+  }
+
+  // Update the "showScoreText" function to call "checkWinCondition" as well:
+  function showScoreText() {
+    const center = calculateCenterOfScreen();
+    const scoreText = document.createElement("div");
+    scoreText.innerText = "Score: " + score;
+    scoreText.style.position = "absolute";
+    scoreText.style.color = "red";
+    scoreText.style.fontSize = "48px";
+    scoreText.style.top = center.y - 24 + "px";
+    scoreText.style.left = center.x - 100 + "px";
+    document.body.appendChild(scoreText);
+
+    checkWinCondition();
+    var scoreDisplayTimeout = setTimeout(() => {
+      document.body.removeChild(scoreText);
+    }, 20000);
+  }
 
   window.addEventListener("resize", onWindowResize, false);
   //console.log("scene", scene);
@@ -530,7 +554,7 @@ const init = () => {
     }
     if (balls.length === 0) {
       console.log("game over");
-      playFirecrackerAnimation();
+      displayWinnerModal(score);
     }
     //cannonDebugRenderer.update()
     camera.updateFrame(renderer);
