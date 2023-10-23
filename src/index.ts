@@ -146,6 +146,7 @@ const init = () => {
 
     ball.userData.index = i; // Store the index for later reference
     ball.userData.hit = 1;
+
     balls.push(ball);
   }
 
@@ -465,6 +466,14 @@ const init = () => {
     const gameOverScore = document.getElementById("gameOverScore");
     if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
     gameOverModal.show();
+    //@ts-ignore
+    document.querySelector("#playEnded").addEventListener("click", (e) => {
+      //hide the start modal
+      gameOverModal.hide();
+      // show the hiddenStart elements
+
+      window.location.reload();
+    });
   }
 
   function displayWinnerModal(finalScore: number) {
@@ -475,6 +484,14 @@ const init = () => {
     const winnerScore = document.getElementById("winnerScore");
     if (winnerScore) winnerScore.textContent = `Your Score: ${finalScore}`;
     winnerModal.show();
+    //@ts-ignore
+    document.querySelector("#playWon").addEventListener("click", (e) => {
+      //hide the start modal
+      winnerModal.hide();
+      // show the hiddenStart elements
+
+      window.location.reload();
+    });
   }
   function checkWinCondition() {
     if (balls.length === 0) {
