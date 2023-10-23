@@ -77,7 +77,7 @@ const init = () => {
   const faceTrackerGroup = new ZapparThree.FaceAnchorGroup(camera, faceTracker);
   // Add our face tracker group into the ThreeJS scene
   scene.add(faceTrackerGroup);
-  console.log("just");
+
   // Start with the content group invisible
   faceTrackerGroup.visible = false;
 
@@ -148,7 +148,7 @@ const init = () => {
     balls.push(ball);
   }
 
-  console.log(balls);
+  //console.log("added_balls", balls);
 
   // const loadingText = document.createElement('div')
   // loadingText.innerText = 'Move your head to catch the balls'
@@ -234,7 +234,7 @@ const init = () => {
       gltf.scene.scale.set(2, 2, 2);
       gltf.scene.position.set(0, -0.7, 1);
       gltf.scene.rotation.set(Math.PI / 2, 0, 0);
-      console.log("model_here,11", gltf.scene);
+      //console.log("model_here,11", gltf.scene);
       gltf.scene.name = "glove";
 
       // Add the scene to the tracker group
@@ -248,19 +248,6 @@ const init = () => {
         }
       });
       const gloveBoundingBox = new THREE.Box3();
-
-      updateBoundingBoxes = function () {
-        // Update glove bounding box
-        gloveBoundingBox.setFromObject(gltf.scene);
-        gloveBoundingBox.expandByScalar(0.003);
-
-        // Update ball bounding boxes
-        ballBoundingBoxes.forEach((boundingBox, index) => {
-          if (balls[index].userData.hit == 1)
-            boundingBox.setFromObject(balls[index]);
-          console.log("ballBounding", ballBoundingBoxes, balls);
-        });
-      };
 
       // HTML element to display the score
       const scoreElement = document.createElement("div");
@@ -293,14 +280,14 @@ const init = () => {
 
       // Collision detection
       checkCollisions = function () {
-        console.log("checking for collisions");
+        // console.log("checking for collisions");
 
         // Check for collisions between glove and balls
         ballBoundingBoxes.forEach((ballBoundingBox, index) => {
           if (gloveBoundingBox.intersectsBox(ballBoundingBox)) {
             score++;
             scoreElement.innerText = "Score: " + score;
-            console.log("Collision detected with ball " + index);
+            //console.log("Collision detected with ball " + index);
 
             const ball = balls[index];
             ball.visible = false;
@@ -318,14 +305,27 @@ const init = () => {
         });
       };
 
+      updateBoundingBoxes = function () {
+        // Update glove bounding box
+        gloveBoundingBox.setFromObject(gltf.scene);
+        gloveBoundingBox.expandByScalar(0.003);
+
+        // Update ball bounding boxes
+        ballBoundingBoxes.forEach((boundingBox, index) => {
+          if (balls[index].userData.hit == 1)
+            boundingBox.setFromObject(balls[index]);
+          //console.log("ballBounding", ballBoundingBoxes, balls);
+        });
+      };
+
       throwCricketBall = function (
         ball: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>
       ) {
-        console.log("started random");
+        //console.log("started random");
         ball.visible = true;
         // Change the ball's mass to 1 when it is thrown
 
-        console.log("ball is thrown");
+        //console.log("ball is thrown");
         const initialPosition = {
           x: ball.position.x,
           y: ball.position.y,
@@ -361,13 +361,13 @@ const init = () => {
           .onComplete((e) => {
             // Animation complete, you can add further actions here
             ball.visible = false;
-            console.log("ball thrown", e);
+            //console.log("ball thrown", e);
             const bounceAnimation = new TWEEN.Tween(ball.position)
               .to({ x: e.x, y: bounceHeight, z: e.z }, throwDuration / 2)
               .easing(TWEEN.Easing.Bounce.Out)
               .onComplete(() => {
                 if (ball.userData.hit == 1) playerMissedBall();
-                console.log("bounce");
+                //console.log("bounce");
               });
             bounceAnimation.start();
           });
@@ -478,7 +478,7 @@ const init = () => {
   let delta;
 
   window.addEventListener("resize", onWindowResize, false);
-  console.log("scene", scene);
+  //console.log("scene", scene);
   function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     render();
@@ -489,21 +489,22 @@ const init = () => {
     // Rotate the balls (for example)
     scene.children.forEach((child) => {
       if (child instanceof THREE.Mesh) {
-        child.rotation.x += 0.01;
-        child.rotation.y += 0.01;
+        child.rotation.x += 0.1;
+        child.rotation.y += 0.1;
       }
     });
     delta = Math.min(clock.getDelta(), 0.1);
 
-    if (modelReady) {
+    if (modelReady && balls.length > 0) {
       checkCollisions(); // Check for collisions
-      // Update bounding boxes' positions
-      updateBoundingBoxes();
-      console.log("balls.length", balls.length);
+
+      updateBoundingBoxes(); // Update bounding boxes' positions
+
+      //console.log("balls.length", balls.length);
 
       // Create a new array to store the balls that will be kept
-      const newBalls = [];
-
+      const newBalls: any = [];
+      // console.log("new_ballss", newBalls);
       for (let i = 0; i < balls.length; i++) {
         const ball = balls[i];
 
@@ -512,7 +513,8 @@ const init = () => {
             // Remove the ball from the scene
             scene.remove(ball);
             // Remove the ball's bounding box from the array
-            ballBoundingBoxes.splice(ball.userData.index, 1);
+
+            ballBoundingBoxes.splice(i, 1);
             // Update the 'hit' status for that ball to indicate it has been removed
             ball.userData.hit = -1;
           } else {
@@ -524,6 +526,11 @@ const init = () => {
 
       // Replace the old 'balls' array with the new one
       balls = newBalls;
+      console.log("balls_array", balls, ballBoundingBoxes);
+    }
+    if (balls.length === 0) {
+      console.log("game over");
+      playFirecrackerAnimation();
     }
     //cannonDebugRenderer.update()
     camera.updateFrame(renderer);
