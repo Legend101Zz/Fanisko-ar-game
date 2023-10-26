@@ -787,8 +787,8 @@ const init = ()=>{
             gloveBoundingBox.max.x -= 0.05; // Adjust max X position to narrow the box
             // gloveBoundingBox.min.z += 0.1; // Adjust min Z position to push the box forward
             // gloveBoundingBox.max.z = -1; // Adjust min X position to narrow the box
-            //gloveBoundingBox.max.y += 0.05; // Adjust max X position to narrow the box
-            gloveBoundingBox.min.y += 0.05; // Adjust min Z position to push the box forward
+            gloveBoundingBox.max.y = 0.01; // Adjust max X position to narrow the box
+            gloveBoundingBox.min.y = 0; // Adjust min Z position to push the box forward
             // Update ball bounding boxes
             ballBoundingBoxes.forEach((boundingBox, index)=>{
                 if (balls[index].userData.hit == 1) boundingBox.setFromObject(balls[index]);
