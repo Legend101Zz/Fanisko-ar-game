@@ -545,7 +545,10 @@ const imagePath2 = new URL(require("5432e2ffb25a1e0f")).href;
 const imagePath3 = new URL(require("93cdc0b4615c3fbf")).href;
 const imagePath4 = new URL(require("eb1194a91599337c")).href;
 //@ts-ignore
-const gameModal = new bootstrap.Modal(document.querySelector("#gameRulesModal"));
+const gameModal = new bootstrap.Modal(document.querySelector("#gameRulesModal"), {
+    backdrop: "static",
+    keyboard: false
+});
 window.addEventListener("load", ()=>{
     //on page load , open the login modal
     gameModal.show();
@@ -776,8 +779,16 @@ const init = ()=>{
         };
         updateBoundingBoxes = function() {
             // Update glove bounding box
+            // Update glove bounding box
             gloveBoundingBox.setFromObject(gltf.scene);
-            gloveBoundingBox.expandByScalar(0.003);
+            gloveBoundingBox.expandByScalar(0.003); // Original expansion
+            console.log("bounding_box", gloveBoundingBox);
+            gloveBoundingBox.min.x += 0.05; // Adjust min X position to narrow the box
+            gloveBoundingBox.max.x -= 0.05; // Adjust max X position to narrow the box
+            // gloveBoundingBox.min.z += 0.1; // Adjust min Z position to push the box forward
+            // gloveBoundingBox.max.z = -1; // Adjust min X position to narrow the box
+            //gloveBoundingBox.max.y += 0.05; // Adjust max X position to narrow the box
+            gloveBoundingBox.min.y += 0.05; // Adjust min Z position to push the box forward
             // Update ball bounding boxes
             ballBoundingBoxes.forEach((boundingBox, index)=>{
                 if (balls[index].userData.hit == 1) boundingBox.setFromObject(balls[index]);
@@ -823,20 +834,28 @@ const init = ()=>{
             const bounceHeight = 1;
             new (0, _tweenJsDefault.default).Tween(initialPosition).to(targetPosition, throwDuration).easing((0, _tweenJsDefault.default).Easing.Quadratic.Out).onUpdate(()=>{
                 ball.position.set(initialPosition.x, initialPosition.y, initialPosition.z);
-                // Create fog trail at the ball's position
-                createFogTrail(new _three.Vector3(initialPosition.x, initialPosition.y, initialPosition.z));
+            // Create fog trail at the ball's position
+            // createFogTrail(
+            //   new THREE.Vector3(
+            //     initialPosition.x,
+            //     initialPosition.y,
+            //     initialPosition.z
+            //   )
+            // );
             }).start().onComplete((e)=>{
-                setTimeout(()=>{
-                    for (const fogObject of fogTrailObjects)scene.remove(fogObject);
-                    fogTrailObjects = []; // Clear the array
-                }, 20); // Animation complete, you can add further actions here
+                // setTimeout(() => {
+                //   for (const fogObject of fogTrailObjects) {
+                //     scene.remove(fogObject);
+                //   }
+                //   fogTrailObjects = []; // Clear the array
+                // }, 0); // Animation complete, you can add further actions here
                 ball.visible = false;
                 //console.log("ball thrown", e);
                 const bounceAnimation = new (0, _tweenJsDefault.default).Tween(ball.position).to({
                     x: e.x,
-                    y: bounceHeight,
+                    y: e.y,
                     z: e.z
-                }, throwDuration / 2).easing((0, _tweenJsDefault.default).Easing.Bounce.Out).onComplete(()=>{
+                }, 0).easing((0, _tweenJsDefault.default).Easing.Bounce.Out).onComplete(()=>{
                     if (ball.userData.hit == 1) playerMissedBall();
                 //console.log("bounce");
                 });
@@ -857,6 +876,8 @@ const init = ()=>{
         throwInterval = setInterval(throwRandomBall, 5000);
         faceTrackerGroup.add(gltf.scene);
         modelReady = true;
+        // Call the updateTimer function every second (1000 milliseconds)
+        setInterval(updateTimer, 1000);
     }, undefined, ()=>{
         console.log("An error ocurred loading the GLTF model");
     });
@@ -898,7 +919,10 @@ const init = ()=>{
     // Add these functions for displaying the modals:
     function displayGameOverModal(finalScore) {
         //@ts-ignore
-        const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"));
+        const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
+            backdrop: "static",
+            keyboard: false
+        });
         const gameOverScore = document.getElementById("gameOverScore");
         if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
         gameOverModal.show();
@@ -924,25 +948,38 @@ const init = ()=>{
             window.location.reload();
         });
     }
-    function checkWinCondition() {
-        if (balls.length === 0) // Player has caught all the balls
-        displayWinnerModal(score);
-    }
+    // function checkWinCondition() {
+    //   if (balls.length === 0) {
+    //     // Player has caught all the balls
+    //     displayWinnerModal(score);
+    //   }
+    // }
     // Update the "showScoreText" function to call "checkWinCondition" as well:
-    function showScoreText() {
-        const center = calculateCenterOfScreen();
-        const scoreText = document.createElement("div");
-        scoreText.innerText = "Score: " + score;
-        scoreText.style.position = "absolute";
-        scoreText.style.color = "red";
-        scoreText.style.fontSize = "48px";
-        scoreText.style.top = center.y - 24 + "px";
-        scoreText.style.left = center.x - 100 + "px";
-        document.body.appendChild(scoreText);
-        checkWinCondition();
-        var scoreDisplayTimeout = setTimeout(()=>{
-            document.body.removeChild(scoreText);
-        }, 20000);
+    // function showScoreText() {
+    //   const center = calculateCenterOfScreen();
+    //   const scoreText = document.createElement("div");
+    //   scoreText.innerText = "Score: " + score;
+    //   scoreText.style.position = "absolute";
+    //   scoreText.style.color = "red";
+    //   scoreText.style.fontSize = "48px";
+    //   scoreText.style.top = center.y - 24 + "px";
+    //   scoreText.style.left = center.x - 100 + "px";
+    //   document.body.appendChild(scoreText);
+    //   // checkWinCondition();
+    //   var scoreDisplayTimeout = setTimeout(() => {
+    //     document.body.removeChild(scoreText);
+    //   }, 20000);
+    // }
+    // Initialize the countdown timer to 30 seconds
+    let countdown = 35;
+    // Function to update and display the timer
+    function updateTimer() {
+        const timerElement = document.getElementById("timer-countdown");
+        if (countdown > 0) {
+            countdown--;
+            if (timerElement) timerElement.textContent = String(countdown);
+        } else // Display the game over modal
+        displayGameOverModal(score);
     }
     window.addEventListener("resize", onWindowResize, false);
     //console.log("scene", scene);
@@ -983,12 +1020,10 @@ const init = ()=>{
             }
             // Replace the old 'balls' array with the new one
             balls = newBalls;
-            console.log("balls_array", balls, ballBoundingBoxes);
+        //console.log("balls_array", balls, ballBoundingBoxes);
         }
-        if (balls.length === 0) {
-            console.log("game over");
-            displayWinnerModal(score);
-        }
+        if (balls.length === 0) //console.log("game over");
+        displayWinnerModal(score);
         //cannonDebugRenderer.update()
         camera.updateFrame(renderer);
         mask.updateFromFaceAnchorGroup(faceTrackerGroup);

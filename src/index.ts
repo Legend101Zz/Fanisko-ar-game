@@ -11,7 +11,11 @@ const imagePath3 = new URL("../assets/images/ball3.png", import.meta.url).href;
 const imagePath4 = new URL("../assets/images/ball4.png", import.meta.url).href;
 //@ts-ignore
 const gameModal = new bootstrap.Modal(
-  document.querySelector("#gameRulesModal")
+  document.querySelector("#gameRulesModal"),
+  {
+    backdrop: "static", // Prevent clicking outside the modal to close it
+    keyboard: false, // Prevent using the keyboard to close it
+  }
 );
 
 window.addEventListener("load", () => {
@@ -309,8 +313,16 @@ const init = () => {
 
       updateBoundingBoxes = function () {
         // Update glove bounding box
+        // Update glove bounding box
         gloveBoundingBox.setFromObject(gltf.scene);
-        gloveBoundingBox.expandByScalar(0.003);
+        gloveBoundingBox.expandByScalar(0.003); // Original expansion
+        console.log("bounding_box", gloveBoundingBox);
+        gloveBoundingBox.min.x += 0.05; // Adjust min X position to narrow the box
+        gloveBoundingBox.max.x -= 0.05; // Adjust max X position to narrow the box
+        // gloveBoundingBox.min.z += 0.1; // Adjust min Z position to push the box forward
+        // gloveBoundingBox.max.z = -1; // Adjust min X position to narrow the box
+        //gloveBoundingBox.max.y += 0.05; // Adjust max X position to narrow the box
+        gloveBoundingBox.min.y += 0.05; // Adjust min Z position to push the box forward
 
         // Update ball bounding boxes
         ballBoundingBoxes.forEach((boundingBox, index) => {
@@ -377,27 +389,27 @@ const init = () => {
               initialPosition.z
             );
             // Create fog trail at the ball's position
-            createFogTrail(
-              new THREE.Vector3(
-                initialPosition.x,
-                initialPosition.y,
-                initialPosition.z
-              )
-            );
+            // createFogTrail(
+            //   new THREE.Vector3(
+            //     initialPosition.x,
+            //     initialPosition.y,
+            //     initialPosition.z
+            //   )
+            // );
           })
           .start()
           .onComplete((e) => {
-            setTimeout(() => {
-              for (const fogObject of fogTrailObjects) {
-                scene.remove(fogObject);
-              }
-              fogTrailObjects = []; // Clear the array
-            }, 20); // Animation complete, you can add further actions here
+            // setTimeout(() => {
+            //   for (const fogObject of fogTrailObjects) {
+            //     scene.remove(fogObject);
+            //   }
+            //   fogTrailObjects = []; // Clear the array
+            // }, 0); // Animation complete, you can add further actions here
             ball.visible = false;
 
             //console.log("ball thrown", e);
             const bounceAnimation = new TWEEN.Tween(ball.position)
-              .to({ x: e.x, y: bounceHeight, z: e.z }, throwDuration / 2)
+              .to({ x: e.x, y: e.y, z: e.z }, 0)
               .easing(TWEEN.Easing.Bounce.Out)
               .onComplete(() => {
                 if (ball.userData.hit == 1) playerMissedBall();
@@ -428,6 +440,9 @@ const init = () => {
 
       faceTrackerGroup.add(gltf.scene);
       modelReady = true;
+
+      // Call the updateTimer function every second (1000 milliseconds)
+      setInterval(updateTimer, 1000);
     },
     undefined,
     () => {
@@ -493,7 +508,11 @@ const init = () => {
   function displayGameOverModal(finalScore: number) {
     //@ts-ignore
     const gameOverModal = new bootstrap.Modal(
-      document.getElementById("gameOverModal")
+      document.getElementById("gameOverModal"),
+      {
+        backdrop: "static", // Prevent clicking outside the modal to close it
+        keyboard: false, // Prevent using the keyboard to close it
+      }
     );
     const gameOverScore = document.getElementById("gameOverScore");
     if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
@@ -525,29 +544,44 @@ const init = () => {
       window.location.reload();
     });
   }
-  function checkWinCondition() {
-    if (balls.length === 0) {
-      // Player has caught all the balls
-      displayWinnerModal(score);
-    }
-  }
+  // function checkWinCondition() {
+  //   if (balls.length === 0) {
+  //     // Player has caught all the balls
+  //     displayWinnerModal(score);
+  //   }
+  // }
 
   // Update the "showScoreText" function to call "checkWinCondition" as well:
-  function showScoreText() {
-    const center = calculateCenterOfScreen();
-    const scoreText = document.createElement("div");
-    scoreText.innerText = "Score: " + score;
-    scoreText.style.position = "absolute";
-    scoreText.style.color = "red";
-    scoreText.style.fontSize = "48px";
-    scoreText.style.top = center.y - 24 + "px";
-    scoreText.style.left = center.x - 100 + "px";
-    document.body.appendChild(scoreText);
+  // function showScoreText() {
+  //   const center = calculateCenterOfScreen();
+  //   const scoreText = document.createElement("div");
+  //   scoreText.innerText = "Score: " + score;
+  //   scoreText.style.position = "absolute";
+  //   scoreText.style.color = "red";
+  //   scoreText.style.fontSize = "48px";
+  //   scoreText.style.top = center.y - 24 + "px";
+  //   scoreText.style.left = center.x - 100 + "px";
+  //   document.body.appendChild(scoreText);
 
-    checkWinCondition();
-    var scoreDisplayTimeout = setTimeout(() => {
-      document.body.removeChild(scoreText);
-    }, 20000);
+  //   // checkWinCondition();
+  //   var scoreDisplayTimeout = setTimeout(() => {
+  //     document.body.removeChild(scoreText);
+  //   }, 20000);
+  // }
+
+  // Initialize the countdown timer to 30 seconds
+  let countdown = 35;
+
+  // Function to update and display the timer
+  function updateTimer() {
+    const timerElement = document.getElementById("timer-countdown");
+    if (countdown > 0) {
+      countdown--;
+      if (timerElement) timerElement.textContent = String(countdown);
+    } else {
+      // Display the game over modal
+      displayGameOverModal(score);
+    }
   }
 
   window.addEventListener("resize", onWindowResize, false);
@@ -599,10 +633,10 @@ const init = () => {
 
       // Replace the old 'balls' array with the new one
       balls = newBalls;
-      console.log("balls_array", balls, ballBoundingBoxes);
+      //console.log("balls_array", balls, ballBoundingBoxes);
     }
     if (balls.length === 0) {
-      console.log("game over");
+      //console.log("game over");
       displayWinnerModal(score);
     }
     //cannonDebugRenderer.update()
