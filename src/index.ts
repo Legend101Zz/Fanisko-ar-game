@@ -32,49 +32,49 @@ document.querySelector(".start-game").addEventListener("click", (e) => {
   init();
 });
 
+if (ZapparThree.browserIncompatible()) {
+  // The browserIncompatibleUI() function shows a full-page dialog that informs the user
+  // they're using an unsupported browser, and provides a button to 'copy' the current page
+  // URL so they can 'paste' it into the address bar of a compatible alternative.
+  ZapparThree.browserIncompatibleUI();
+
+  // If the browser is not compatible, we can avoid setting up the rest of the page
+  // so we throw an exception here.
+  throw new Error("Unsupported browser");
+}
+
+let updateBoundingBoxes: () => void;
+let checkCollisions: () => void;
+let throwCricketBall: (obj: any) => void;
+let modelReady = false;
+let score = 0;
+
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  preserveDrawingBuffer: true,
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const manager = new ZapparThree.LoadingManager();
+// Use this function to set your context
+let camera = new ZapparThree.Camera({
+  rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
+  userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM=",
+});
+camera.userCameraMirrorMode = ZapparThree.CameraMirrorMode.Poses;
+ZapparThree.glContextSet(renderer.getContext());
+const scene = new THREE.Scene();
+scene.background = camera.backgroundTexture;
+// Create a camera and set the scene background to the camera's backgroundTexture
+
+// Request camera permissions and start the camera
+ZapparThree.permissionRequestUI().then((granted) => {
+  if (granted) camera.start();
+  else ZapparThree.permissionDeniedUI();
+});
+
 const init = () => {
-  if (ZapparThree.browserIncompatible()) {
-    // The browserIncompatibleUI() function shows a full-page dialog that informs the user
-    // they're using an unsupported browser, and provides a button to 'copy' the current page
-    // URL so they can 'paste' it into the address bar of a compatible alternative.
-    ZapparThree.browserIncompatibleUI();
-
-    // If the browser is not compatible, we can avoid setting up the rest of the page
-    // so we throw an exception here.
-    throw new Error("Unsupported browser");
-  }
-
-  let updateBoundingBoxes: () => void;
-  let checkCollisions: () => void;
-  let throwCricketBall: (obj: any) => void;
-  let modelReady = false;
-  let score = 0;
-
-  const renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    preserveDrawingBuffer: true,
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  const manager = new ZapparThree.LoadingManager();
-  // Use this function to set your context
-  let camera = new ZapparThree.Camera({
-    rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
-    userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM=",
-  });
-  camera.userCameraMirrorMode = ZapparThree.CameraMirrorMode.Poses;
-  ZapparThree.glContextSet(renderer.getContext());
-  const scene = new THREE.Scene();
-  scene.background = camera.backgroundTexture;
-  // Create a camera and set the scene background to the camera's backgroundTexture
-
-  // Request camera permissions and start the camera
-  ZapparThree.permissionRequestUI().then((granted) => {
-    if (granted) camera.start();
-    else ZapparThree.permissionDeniedUI();
-  });
-
   // Create a FaceTracker and a FaceAnchorGroup from it to put Three content in
   // Pass our loading manager to the loader to ensure that the progress bar
   // works correctly
@@ -369,15 +369,22 @@ const init = () => {
 
         const randomZ = Math.random() * 0.5 - 0.25; // Random variation in z-axis
 
-        const maxY = -screenHeight / 2 + ball.geometry.parameters.radius;
+        // const maxY = -screenHeight / 2 + ball.geometry.parameters.radius;
         const targetPosition = {
           x: ball.position.x + randomX,
           //@ts-ignore
-          y: gltf.scene.position.y - 1,
+          y: gltf.scene.position.y - 0.1,
           z: ball.position.z + randomZ,
         }; // Target position
-        const throwDuration = 3500; // Animation duration in milliseconds
-        const bounceHeight = 1;
+        const throwDuration = 2500; // Animation duration in milliseconds
+
+        // // Create a timeout for the ball
+        // const throwTimeout = setTimeout(() => {
+        //   // Check if the ball was not caught (userData.hit is still 1)
+        //   if (ball.userData.hit === 1) {
+        //     playerMissedBall();
+        //   }
+        // }, throwDuration);
 
         new TWEEN.Tween(initialPosition)
           .to(targetPosition, throwDuration)
@@ -399,23 +406,22 @@ const init = () => {
           })
           .start()
           .onComplete((e) => {
+            if (ball.userData.hit === 1) playerMissedBall();
             // setTimeout(() => {
             //   for (const fogObject of fogTrailObjects) {
             //     scene.remove(fogObject);
             //   }
             //   fogTrailObjects = []; // Clear the array
             // }, 0); // Animation complete, you can add further actions here
+
+            // clearTimeout(throwTimeout);
             ball.visible = false;
+            // Add the collided ball to the removedBalls array
+            ball.userData.hit = 0;
 
             //console.log("ball thrown", e);
-            const bounceAnimation = new TWEEN.Tween(ball.position)
-              .to({ x: e.x, y: e.y, z: e.z }, 0)
-              .easing(TWEEN.Easing.Bounce.Out)
-              .onComplete(() => {
-                if (ball.userData.hit == 1) playerMissedBall();
-                //console.log("bounce");
-              });
-            bounceAnimation.start();
+
+            //console.log("bounce");
           });
       };
 
@@ -436,7 +442,7 @@ const init = () => {
         }
       }
 
-      throwInterval = setInterval(throwRandomBall, 5000);
+      throwInterval = setInterval(throwRandomBall, 3000);
 
       faceTrackerGroup.add(gltf.scene);
       modelReady = true;
@@ -570,7 +576,7 @@ const init = () => {
   // }
 
   // Initialize the countdown timer to 30 seconds
-  let countdown = 35;
+  let countdown = 60;
 
   // Function to update and display the timer
   function updateTimer() {
@@ -635,9 +641,11 @@ const init = () => {
       balls = newBalls;
       //console.log("balls_array", balls, ballBoundingBoxes);
     }
-    if (balls.length === 0) {
+    if (balls.length === 0 && score === 6) {
       //console.log("game over");
       displayWinnerModal(score);
+    } else if (balls.length === 0) {
+      displayGameOverModal(score);
     }
     //cannonDebugRenderer.update()
     camera.updateFrame(renderer);
