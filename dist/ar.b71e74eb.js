@@ -560,43 +560,43 @@ document.querySelector(".start-game").addEventListener("click", (e)=>{
     // show the hiddenStart elements
     init();
 });
-if (_zapparThreejs.browserIncompatible()) {
-    // The browserIncompatibleUI() function shows a full-page dialog that informs the user
-    // they're using an unsupported browser, and provides a button to 'copy' the current page
-    // URL so they can 'paste' it into the address bar of a compatible alternative.
-    _zapparThreejs.browserIncompatibleUI();
-    // If the browser is not compatible, we can avoid setting up the rest of the page
-    // so we throw an exception here.
-    throw new Error("Unsupported browser");
-}
-let updateBoundingBoxes;
-let checkCollisions;
-let throwCricketBall;
-let modelReady = false;
-let score = 0;
-const renderer = new _three.WebGLRenderer({
-    antialias: true,
-    preserveDrawingBuffer: true
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-const manager = new _zapparThreejs.LoadingManager();
-// Use this function to set your context
-let camera = new _zapparThreejs.Camera({
-    rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
-    userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
-});
-camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
-_zapparThreejs.glContextSet(renderer.getContext());
-const scene = new _three.Scene();
-scene.background = camera.backgroundTexture;
-// Create a camera and set the scene background to the camera's backgroundTexture
-// Request camera permissions and start the camera
-_zapparThreejs.permissionRequestUI().then((granted)=>{
-    if (granted) camera.start();
-    else _zapparThreejs.permissionDeniedUI();
-});
 const init = ()=>{
+    if (_zapparThreejs.browserIncompatible()) {
+        // The browserIncompatibleUI() function shows a full-page dialog that informs the user
+        // they're using an unsupported browser, and provides a button to 'copy' the current page
+        // URL so they can 'paste' it into the address bar of a compatible alternative.
+        _zapparThreejs.browserIncompatibleUI();
+        // If the browser is not compatible, we can avoid setting up the rest of the page
+        // so we throw an exception here.
+        throw new Error("Unsupported browser");
+    }
+    let updateBoundingBoxes;
+    let checkCollisions;
+    let throwCricketBall;
+    let modelReady = false;
+    let score = 0;
+    const renderer = new _three.WebGLRenderer({
+        antialias: true,
+        preserveDrawingBuffer: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    const manager = new _zapparThreejs.LoadingManager();
+    // Use this function to set your context
+    let camera = new _zapparThreejs.Camera({
+        rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
+        userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
+    });
+    camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
+    _zapparThreejs.glContextSet(renderer.getContext());
+    const scene = new _three.Scene();
+    scene.background = camera.backgroundTexture;
+    // Create a camera and set the scene background to the camera's backgroundTexture
+    // Request camera permissions and start the camera
+    _zapparThreejs.permissionRequestUI().then((granted)=>{
+        if (granted) camera.start();
+        else _zapparThreejs.permissionDeniedUI();
+    });
     // Create a FaceTracker and a FaceAnchorGroup from it to put Three content in
     // Pass our loading manager to the loader to ensure that the progress bar
     // works correctly
@@ -827,10 +827,10 @@ const init = ()=>{
             const targetPosition = {
                 x: ball.position.x + randomX,
                 //@ts-ignore
-                y: gltf.scene.position.y - 0.1,
+                y: gltf.scene.position.y - 0.5,
                 z: ball.position.z + randomZ
             }; // Target position
-            const throwDuration = 2500; // Animation duration in milliseconds
+            const throwDuration = 3500; // Animation duration in milliseconds
             // // Create a timeout for the ball
             // const throwTimeout = setTimeout(() => {
             //   // Check if the ball was not caught (userData.hit is still 1)
@@ -875,7 +875,7 @@ const init = ()=>{
                 throwCricketBall(randomBall);
             }
         }
-        throwInterval = setInterval(throwRandomBall, 3000);
+        throwInterval = setInterval(throwRandomBall, 5000);
         faceTrackerGroup.add(gltf.scene);
         modelReady = true;
         // Call the updateTimer function every second (1000 milliseconds)
