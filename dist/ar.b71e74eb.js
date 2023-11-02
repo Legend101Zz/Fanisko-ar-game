@@ -544,6 +544,8 @@ const imagePath1 = new URL(require("e2b74811ae22f680")).href;
 const imagePath2 = new URL(require("5432e2ffb25a1e0f")).href;
 const imagePath3 = new URL(require("93cdc0b4615c3fbf")).href;
 const imagePath4 = new URL(require("eb1194a91599337c")).href;
+// Listen for the popstate event
+window.addEventListener("popstate", handlePopstate);
 //@ts-ignore
 const gameModal = new bootstrap.Modal(document.querySelector("#gameRulesModal"), {
     backdrop: "static",
@@ -621,6 +623,9 @@ const init = ()=>{
     // Hide the 3D content when the face is out of view
     faceTrackerGroup.faceTracker.onVisible.bind(()=>{
         faceTrackerGroup.visible = true;
+        window.history.pushState({
+            screen: "playing"
+        }, "Playing", window.location.href);
     });
     faceTrackerGroup.faceTracker.onNotVisible.bind(()=>{
         faceTrackerGroup.visible = false;
@@ -1050,6 +1055,12 @@ const init = ()=>{
     }
     animate();
 };
+function handlePopstate(event) {
+    if (event.state && event.state.screen === "playing") ;
+    else // Handle going back to the instruction screen
+    // Show the game start modal here
+    window.location.reload();
+}
 
 },{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","@tweenjs/tween.js":"7DfAI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","e2b74811ae22f680":"9sMm2","5432e2ffb25a1e0f":"6ZnIa","93cdc0b4615c3fbf":"jotub","eb1194a91599337c":"hmGTP","965078bf304453ea":"djv5M","./index.css":"irmnC"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");

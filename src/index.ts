@@ -9,6 +9,9 @@ const imagePath1 = new URL("../assets/images/ball.png", import.meta.url).href;
 const imagePath2 = new URL("../assets/images/ball2.png", import.meta.url).href;
 const imagePath3 = new URL("../assets/images/ball3.png", import.meta.url).href;
 const imagePath4 = new URL("../assets/images/ball4.png", import.meta.url).href;
+
+// Listen for the popstate event
+window.addEventListener("popstate", handlePopstate);
 //@ts-ignore
 const gameModal = new bootstrap.Modal(
   document.querySelector("#gameRulesModal"),
@@ -104,6 +107,12 @@ const init = () => {
   // Hide the 3D content when the face is out of view
   faceTrackerGroup.faceTracker.onVisible.bind(() => {
     faceTrackerGroup.visible = true;
+
+    window.history.pushState(
+      { screen: "playing" },
+      "Playing",
+      window.location.href
+    );
   });
   faceTrackerGroup.faceTracker.onNotVisible.bind(() => {
     faceTrackerGroup.visible = false;
@@ -676,3 +685,13 @@ const init = () => {
   }
   animate();
 };
+
+function handlePopstate(event: any) {
+  if (event.state && event.state.screen === "playing") {
+    // Handle resuming the game here if needed
+  } else {
+    // Handle going back to the instruction screen
+    // Show the game start modal here
+    window.location.reload();
+  }
+}
