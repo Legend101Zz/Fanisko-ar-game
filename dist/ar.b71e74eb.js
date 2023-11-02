@@ -560,30 +560,30 @@ document.querySelector(".start-game").addEventListener("click", (e)=>{
     //hide the start modal
     gameModal.hide();
     // show the hiddenStart elements
-    start();
+    init();
 });
-var updateBoundingBoxes;
-var checkCollisions;
-var throwCricketBall;
-var modelReady = false;
-var score = 0;
-var renderer = new _three.WebGLRenderer({
-    antialias: true,
-    preserveDrawingBuffer: true
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-var manager = new _zapparThreejs.LoadingManager();
-// Use this function to set your context
-var camera = new _zapparThreejs.Camera({
-    rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
-    userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
-});
-camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
-_zapparThreejs.glContextSet(renderer.getContext());
-var scene = new _three.Scene();
-scene.background = camera.backgroundTexture;
-const start = ()=>{
+const init = ()=>{
+    var updateBoundingBoxes;
+    var checkCollisions;
+    var throwCricketBall;
+    var modelReady = false;
+    var score = 0;
+    var renderer = new _three.WebGLRenderer({
+        antialias: true,
+        preserveDrawingBuffer: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    var manager = new _zapparThreejs.LoadingManager();
+    // Use this function to set your context
+    var camera = new _zapparThreejs.Camera({
+        rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
+        userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
+    });
+    camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
+    _zapparThreejs.glContextSet(renderer.getContext());
+    var scene = new _three.Scene();
+    scene.background = camera.backgroundTexture;
     if (_zapparThreejs.browserIncompatible()) {
         // The browserIncompatibleUI() function shows a full-page dialog that informs the user
         // they're using an unsupported browser, and provides a button to 'copy' the current page
@@ -596,13 +596,9 @@ const start = ()=>{
     // Create a camera and set the scene background to the camera's backgroundTexture
     // Request camera permissions and start the camera
     _zapparThreejs.permissionRequestUI().then((granted)=>{
-        if (granted) {
-            camera.start();
-            setTimeout(init, 1000);
-        } else _zapparThreejs.permissionDeniedUI();
+        if (granted) camera.start();
+        else _zapparThreejs.permissionDeniedUI();
     });
-};
-const init = ()=>{
     // Create a FaceTracker and a FaceAnchorGroup from it to put Three content in
     // Pass our loading manager to the loader to ensure that the progress bar
     // works correctly
