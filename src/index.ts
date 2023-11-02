@@ -29,10 +29,34 @@ document.querySelector(".start-game").addEventListener("click", (e) => {
   gameModal.hide();
   // show the hiddenStart elements
 
-  init();
+  start();
 });
 
-const init = () => {
+var updateBoundingBoxes: () => void;
+var checkCollisions: () => void;
+var throwCricketBall: (obj: any) => void;
+var modelReady = false;
+var score = 0;
+
+var renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  preserveDrawingBuffer: true,
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+var manager = new ZapparThree.LoadingManager();
+// Use this function to set your context
+var camera = new ZapparThree.Camera({
+  rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
+  userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM=",
+});
+camera.userCameraMirrorMode = ZapparThree.CameraMirrorMode.Poses;
+ZapparThree.glContextSet(renderer.getContext());
+var scene = new THREE.Scene();
+scene.background = camera.backgroundTexture;
+
+const start = () => {
   if (ZapparThree.browserIncompatible()) {
     // The browserIncompatibleUI() function shows a full-page dialog that informs the user
     // they're using an unsupported browser, and provides a button to 'copy' the current page
@@ -44,37 +68,18 @@ const init = () => {
     throw new Error("Unsupported browser");
   }
 
-  let updateBoundingBoxes: () => void;
-  let checkCollisions: () => void;
-  let throwCricketBall: (obj: any) => void;
-  let modelReady = false;
-  let score = 0;
-
-  const renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    preserveDrawingBuffer: true,
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  const manager = new ZapparThree.LoadingManager();
-  // Use this function to set your context
-  let camera = new ZapparThree.Camera({
-    rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
-    userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM=",
-  });
-  camera.userCameraMirrorMode = ZapparThree.CameraMirrorMode.Poses;
-  ZapparThree.glContextSet(renderer.getContext());
-  const scene = new THREE.Scene();
-  scene.background = camera.backgroundTexture;
   // Create a camera and set the scene background to the camera's backgroundTexture
 
   // Request camera permissions and start the camera
   ZapparThree.permissionRequestUI().then((granted) => {
-    if (granted) camera.start();
-    else ZapparThree.permissionDeniedUI();
+    if (granted) {
+      camera.start();
+      setTimeout(init, 1000);
+    } else ZapparThree.permissionDeniedUI();
   });
+};
 
+const init = () => {
   // Create a FaceTracker and a FaceAnchorGroup from it to put Three content in
   // Pass our loading manager to the loader to ensure that the progress bar
   // works correctly
@@ -103,6 +108,13 @@ const init = () => {
   faceTrackerGroup.faceTracker.onNotVisible.bind(() => {
     faceTrackerGroup.visible = false;
   });
+
+  //show lifes
+
+  // Show the life icons after initialization
+  const lifeIcons = document.querySelector(".life-icons");
+  //@ts-ignore
+  lifeIcons.style.display = "flex";
 
   // Create a cricket balls
 
@@ -577,6 +589,10 @@ const init = () => {
 
   // Initialize the countdown timer to 30 seconds
   let countdown = 60;
+
+  const timer = document.querySelector(".timer");
+  //@ts-ignore
+  timer.style.display = "flex";
 
   // Function to update and display the timer
   function updateTimer() {

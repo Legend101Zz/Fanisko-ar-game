@@ -558,9 +558,30 @@ document.querySelector(".start-game").addEventListener("click", (e)=>{
     //hide the start modal
     gameModal.hide();
     // show the hiddenStart elements
-    init();
+    start();
 });
-const init = ()=>{
+var updateBoundingBoxes;
+var checkCollisions;
+var throwCricketBall;
+var modelReady = false;
+var score = 0;
+var renderer = new _three.WebGLRenderer({
+    antialias: true,
+    preserveDrawingBuffer: true
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+var manager = new _zapparThreejs.LoadingManager();
+// Use this function to set your context
+var camera = new _zapparThreejs.Camera({
+    rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
+    userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
+});
+camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
+_zapparThreejs.glContextSet(renderer.getContext());
+var scene = new _three.Scene();
+scene.background = camera.backgroundTexture;
+const start = ()=>{
     if (_zapparThreejs.browserIncompatible()) {
         // The browserIncompatibleUI() function shows a full-page dialog that informs the user
         // they're using an unsupported browser, and provides a button to 'copy' the current page
@@ -570,33 +591,16 @@ const init = ()=>{
         // so we throw an exception here.
         throw new Error("Unsupported browser");
     }
-    let updateBoundingBoxes;
-    let checkCollisions;
-    let throwCricketBall;
-    let modelReady = false;
-    let score = 0;
-    const renderer = new _three.WebGLRenderer({
-        antialias: true,
-        preserveDrawingBuffer: true
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-    const manager = new _zapparThreejs.LoadingManager();
-    // Use this function to set your context
-    let camera = new _zapparThreejs.Camera({
-        rearCameraSource: "csO9c0YpAf274OuCPUA53CNE0YHlIr2yXCi+SqfBZZ8=",
-        userCameraSource: "RKxXByjnabbADGQNNZqLVLdmXlS0YkETYCIbg+XxnvM="
-    });
-    camera.userCameraMirrorMode = _zapparThreejs.CameraMirrorMode.Poses;
-    _zapparThreejs.glContextSet(renderer.getContext());
-    const scene = new _three.Scene();
-    scene.background = camera.backgroundTexture;
     // Create a camera and set the scene background to the camera's backgroundTexture
     // Request camera permissions and start the camera
     _zapparThreejs.permissionRequestUI().then((granted)=>{
-        if (granted) camera.start();
-        else _zapparThreejs.permissionDeniedUI();
+        if (granted) {
+            camera.start();
+            setTimeout(init, 1000);
+        } else _zapparThreejs.permissionDeniedUI();
     });
+};
+const init = ()=>{
     // Create a FaceTracker and a FaceAnchorGroup from it to put Three content in
     // Pass our loading manager to the loader to ensure that the progress bar
     // works correctly
@@ -621,6 +625,11 @@ const init = ()=>{
     faceTrackerGroup.faceTracker.onNotVisible.bind(()=>{
         faceTrackerGroup.visible = false;
     });
+    //show lifes
+    // Show the life icons after initialization
+    const lifeIcons = document.querySelector(".life-icons");
+    //@ts-ignore
+    lifeIcons.style.display = "flex";
     // Create a cricket balls
     const cricketBallTextureLoader = new _three.TextureLoader();
     const cricketBallTexture1 = cricketBallTextureLoader.load(imagePath1);
@@ -974,6 +983,9 @@ const init = ()=>{
     // }
     // Initialize the countdown timer to 30 seconds
     let countdown = 60;
+    const timer = document.querySelector(".timer");
+    //@ts-ignore
+    timer.style.display = "flex";
     // Function to update and display the timer
     function updateTimer() {
         const timerElement = document.getElementById("timer-countdown");
