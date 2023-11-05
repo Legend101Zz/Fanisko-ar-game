@@ -983,7 +983,7 @@ const init = ()=>{
     //   }, 20000);
     // }
     // Initialize the countdown timer to 30 seconds
-    let countdown = 60;
+    let countdown = 6;
     const timer = document.querySelector(".timer");
     //@ts-ignore
     timer.style.display = "flex";

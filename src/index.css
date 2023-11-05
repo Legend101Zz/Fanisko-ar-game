@@ -56,20 +56,15 @@ body {
 
 .card {
   display: block;
-  /* position: absolute; */
-  /* top: 0;  */
-  /* Adjust top to start from the top of the screen */
-  /* left: 0; */
-  /* Set left to 0 to fill the entire width */
   margin: 0 auto;
-  width: 87%; /* Make it take the full screen width */
+  width: 87%;
   height: 87%;
   background-color: #fff;
-  border-radius: 0; /* Remove border-radius to make it rectangular */
+  border-radius: 0;
 
-  box-shadow: 0 30 50 rgba(0, 0, 0, 0.2);
+  /* Add appropriate values for the box-shadow property */
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
 
-  /* transform: translateX(-50%); */
   transition: left 0.5s ease-out;
   will-change: left;
 
