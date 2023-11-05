@@ -930,6 +930,7 @@ const init = ()=>{
     //============GAME-END-LOGIC============
     // Add these functions for displaying the modals:
     function displayGameOverModal(finalScore) {
+        // renderer.domElement.remove();
         //@ts-ignore
         const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
             backdrop: "static",
@@ -947,8 +948,12 @@ const init = ()=>{
         });
     }
     function displayWinnerModal(finalScore) {
+        // renderer.domElement.remove();
         //@ts-ignore
-        const winnerModal = new bootstrap.Modal(document.getElementById("winnerModal"));
+        const winnerModal = new bootstrap.Modal(document.getElementById("winnerModal"), {
+            backdrop: "static",
+            keyboard: false
+        });
         const winnerScore = document.getElementById("winnerScore");
         if (winnerScore) winnerScore.textContent = `Your Score: ${finalScore}`;
         winnerModal.show();
@@ -983,7 +988,7 @@ const init = ()=>{
     //   }, 20000);
     // }
     // Initialize the countdown timer to 30 seconds
-    let countdown = 60;
+    let countdown = 3;
     const timer = document.querySelector(".timer");
     //@ts-ignore
     timer.style.display = "flex";
