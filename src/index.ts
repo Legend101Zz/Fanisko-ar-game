@@ -145,6 +145,7 @@ const init = () => {
 
   let balls: THREE.Object3D<THREE.Event>[] = []; // Array to store the ball objects
   const ballBoundingBoxes: THREE.Box3[] = [];
+  const boundingBoxMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
   for (let i = 0; i < 6; i++) {
     const ball = new THREE.Mesh(
@@ -161,9 +162,18 @@ const init = () => {
     scene.add(ball);
     // creating bounding boxes to check for collison
     const ballBoundingBox = new THREE.Box3();
-    ballBoundingBox.setFromObject(ball);
-    ballBoundingBox.expandByScalar(0.02); // Expand the bounding box a bit for accuracy
 
+    ballBoundingBox.min.x = 0.02; // Adjust min X position to narrow the box
+    ballBoundingBox.max.x = -0.02; // Adjust max X position to narrow the box
+    ballBoundingBox.min.z = 0.02; // Adjust min Z position to push the box forward
+    ballBoundingBox.max.z = -0.02; // Adjust max Z position to push the box backward
+    ballBoundingBox.max.y = 0.002; // Adjust max Y position to increase the height
+    ballBoundingBox.min.y = -0.002;
+
+    ballBoundingBox.setFromObject(ball);
+    ballBoundingBox.expandByScalar(0.002); // Expand the bounding box a bit for accuracy
+    // const boundingBoxGeometry = new THREE.Box3Helper(ballBoundingBox, 0xff0000);
+    // scene.add(boundingBoxGeometry);
     ballBoundingBoxes.push(ballBoundingBox);
 
     ball.userData.index = i; // Store the index for later reference
@@ -273,6 +283,19 @@ const init = () => {
       });
       const gloveBoundingBox = new THREE.Box3();
 
+      // // Define a material for the bounding box outline
+      // const boundingBoxOutlineMaterial = new THREE.LineBasicMaterial({
+      //   color: 0x00ff00, // Choose your desired color
+      //   linewidth: 2, // Adjust line width as needed
+      // });
+      // // Create a wireframe box to visualize the gloveBoundingBox
+      // const gloveBoundingBoxHelper = new THREE.Box3Helper(
+      //   gloveBoundingBox,
+      //   boundingBoxOutlineMaterial
+      // );
+
+      // scene.add(gloveBoundingBoxHelper);
+
       // HTML element to display the score
       const scoreElement = document.createElement("div");
       scoreElement.innerText = "Score: 0";
@@ -333,14 +356,14 @@ const init = () => {
         // Update glove bounding box
         // Update glove bounding box
         gloveBoundingBox.setFromObject(gltf.scene);
-        gloveBoundingBox.expandByScalar(0.003); // Original expansion
+        //gloveBoundingBox.expandByScalar(0.003); // Original expansion
         console.log("bounding_box", gloveBoundingBox);
-        gloveBoundingBox.min.x += 0.05; // Adjust min X position to narrow the box
-        gloveBoundingBox.max.x -= 0.05; // Adjust max X position to narrow the box
-        // gloveBoundingBox.min.z += 0.1; // Adjust min Z position to push the box forward
-        // gloveBoundingBox.max.z = -1; // Adjust min X position to narrow the box
-        gloveBoundingBox.max.y = 0.001; // Adjust max X position to narrow the box
-        gloveBoundingBox.min.y = -0.01; // Adjust min Z position to push the box forward
+        gloveBoundingBox.min.x += 0.01; // Adjust min X position to narrow the box
+        gloveBoundingBox.max.x -= gltf.scene.position.x; // Adjust max X position to narrow the box
+        gloveBoundingBox.min.z += 0.02; // Adjust min Z position to push the box forward
+        gloveBoundingBox.max.z -= 0.02; // Adjust max Z position to push the box backward
+        gloveBoundingBox.max.y = gltf.scene.position.y; // Adjust max Y position to increase the height
+        gloveBoundingBox.min.y = gltf.scene.position.y; // Adjust min Y position to lower the height
 
         // Update ball bounding boxes
         ballBoundingBoxes.forEach((boundingBox, index) => {
@@ -600,7 +623,7 @@ const init = () => {
   // }
 
   // Initialize the countdown timer to 30 seconds
-  let countdown = 3;
+  let countdown = 60;
 
   const timer = document.querySelector(".timer");
   //@ts-ignore
