@@ -339,8 +339,8 @@ const init = () => {
         gloveBoundingBox.max.x -= 0.05; // Adjust max X position to narrow the box
         // gloveBoundingBox.min.z += 0.1; // Adjust min Z position to push the box forward
         // gloveBoundingBox.max.z = -1; // Adjust min X position to narrow the box
-        gloveBoundingBox.max.y = 0.01; // Adjust max X position to narrow the box
-        gloveBoundingBox.min.y = 0; // Adjust min Z position to push the box forward
+        gloveBoundingBox.max.y = 0.001; // Adjust max X position to narrow the box
+        gloveBoundingBox.min.y = -0.01; // Adjust min Z position to push the box forward
 
         // Update ball bounding boxes
         ballBoundingBoxes.forEach((boundingBox, index) => {
@@ -594,7 +594,7 @@ const init = () => {
   // }
 
   // Initialize the countdown timer to 30 seconds
-  let countdown = 6;
+  let countdown = 60;
 
   const timer = document.querySelector(".timer");
   //@ts-ignore
