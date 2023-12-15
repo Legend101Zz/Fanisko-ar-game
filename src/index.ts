@@ -241,10 +241,38 @@ const init = () => {
     }
   }
 
+  // HTML element to display the missed text
+  const missedTextElement = document.createElement("div");
+  missedTextElement.style.fontSize = "0px";
+  missedTextElement.style.position = "absolute";
+  missedTextElement.style.color = "red";
+  missedTextElement.style.top = "250px";
+  missedTextElement.style.left = "50%";
+  missedTextElement.style.transform = "translateX(-50%)";
+  document.body.appendChild(missedTextElement);
+
+  function showMissedText() {
+    missedTextElement.innerText = "Missed!";
+    missedTextElement.style.position = "absolute";
+    missedTextElement.style.color = "white";
+    missedTextElement.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    missedTextElement.style.padding = "5px";
+    missedTextElement.style.borderRadius = "5px";
+    missedTextElement.style.fontSize = "30px";
+    missedTextElement.style.top = "40%";
+    missedTextElement.style.left = "50%";
+    missedTextElement.style.transform = "translate(-50%, -50%)";
+
+    setTimeout(() => {
+      missedTextElement.innerText = "";
+    }, 2000); // Remove the missed text after 2 seconds
+  }
+
   // Call this function when the player misses the ball to reduce a life
   function playerMissedBall(): void {
     playerLives--; // Reduce the number of lives
     updateLifeIcons(); // Update the displayed life icons
+    showMissedText();
     if (playerLives === 0) {
       // Game over logic (you can implement it here)
       balls = []; // Clear the balls array so no balls are spwaned at game end
@@ -425,7 +453,7 @@ const init = () => {
         const targetPosition = {
           x: ball.position.x + randomX,
           //@ts-ignore
-          y: gltf.scene.position.y - 0.5,
+          y: gltf.scene.position.y - 0.9,
           z: ball.position.z + randomZ,
         }; // Target position
         const throwDuration = 3500; // Animation duration in milliseconds
@@ -633,7 +661,7 @@ const init = () => {
   //   }, 20000);
   // }
 
-  // Initialize the countdown timer to 30 seconds
+  // Initialize the countdown timer to 60 seconds
   let countdown = 60;
 
   const timer = document.querySelector(".timer");

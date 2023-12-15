@@ -539,11 +539,11 @@ var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _tweenJs = require("@tweenjs/tween.js");
 var _tweenJsDefault = parcelHelpers.interopDefault(_tweenJs);
 var _indexCss = require("./index.css");
-const modelPath = new URL(require("23a30f2358ae680c")).href;
-const imagePath1 = new URL(require("c01634900c492399")).href;
-const imagePath2 = new URL(require("d65a7d8c361b921f")).href;
-const imagePath3 = new URL(require("cbd8154f5091d057")).href;
-const imagePath4 = new URL(require("9e57e8031991b9db")).href;
+const modelPath = new URL(require("2c60f4a792ad15b7")).href;
+const imagePath1 = new URL(require("abf8b7f4afe2d8b")).href;
+const imagePath2 = new URL(require("e53ce694ed926347")).href;
+const imagePath3 = new URL(require("b8312be3bde2b03a")).href;
+const imagePath4 = new URL(require("aa2b0fe4fe6dde06")).href;
 // Listen for the popstate event
 window.addEventListener("popstate", handlePopstate);
 //@ts-ignore
@@ -718,10 +718,35 @@ const init = ()=>{
             }
         }
     }
+    // HTML element to display the missed text
+    const missedTextElement = document.createElement("div");
+    missedTextElement.style.fontSize = "0px";
+    missedTextElement.style.position = "absolute";
+    missedTextElement.style.color = "red";
+    missedTextElement.style.top = "250px";
+    missedTextElement.style.left = "50%";
+    missedTextElement.style.transform = "translateX(-50%)";
+    document.body.appendChild(missedTextElement);
+    function showMissedText() {
+        missedTextElement.innerText = "Missed!";
+        missedTextElement.style.position = "absolute";
+        missedTextElement.style.color = "white";
+        missedTextElement.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+        missedTextElement.style.padding = "5px";
+        missedTextElement.style.borderRadius = "5px";
+        missedTextElement.style.fontSize = "30px";
+        missedTextElement.style.top = "40%";
+        missedTextElement.style.left = "50%";
+        missedTextElement.style.transform = "translate(-50%, -50%)";
+        setTimeout(()=>{
+            missedTextElement.innerText = "";
+        }, 2000); // Remove the missed text after 2 seconds
+    }
     // Call this function when the player misses the ball to reduce a life
     function playerMissedBall() {
         playerLives--; // Reduce the number of lives
         updateLifeIcons(); // Update the displayed life icons
+        showMissedText();
         if (playerLives === 0) {
             // Game over logic (you can implement it here)
             balls = []; // Clear the balls array so no balls are spwaned at game end
@@ -871,7 +896,7 @@ const init = ()=>{
             const targetPosition = {
                 x: ball.position.x + randomX,
                 //@ts-ignore
-                y: gltf.scene.position.y - 0.5,
+                y: gltf.scene.position.y - 0.9,
                 z: ball.position.z + randomZ
             }; // Target position
             const throwDuration = 3500; // Animation duration in milliseconds
@@ -1021,7 +1046,7 @@ const init = ()=>{
     //     document.body.removeChild(scoreText);
     //   }, 20000);
     // }
-    // Initialize the countdown timer to 30 seconds
+    // Initialize the countdown timer to 60 seconds
     let countdown = 60;
     const timer = document.querySelector(".timer");
     //@ts-ignore
@@ -1100,7 +1125,7 @@ function handlePopstate(event) {
     window.location.reload();
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","@tweenjs/tween.js":"7DfAI","./index.css":"irmnC","23a30f2358ae680c":"djv5M","c01634900c492399":"9sMm2","d65a7d8c361b921f":"6ZnIa","cbd8154f5091d057":"jotub","9e57e8031991b9db":"hmGTP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","@tweenjs/tween.js":"7DfAI","./index.css":"irmnC","2c60f4a792ad15b7":"djv5M","abf8b7f4afe2d8b":"9sMm2","e53ce694ed926347":"6ZnIa","b8312be3bde2b03a":"jotub","aa2b0fe4fe6dde06":"hmGTP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -32276,7 +32301,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("e5722f93ae490adc"));
+                let url = new URL(require("ab6016635069926e"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -32286,7 +32311,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("e5722f93ae490adc"));
+                let url = new URL(require("ab6016635069926e"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -32296,7 +32321,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("4929e215f9fb9b8e"));
+                let url = new URL(require("65bef6872557a20a"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -32391,14 +32416,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("a60b98c70ce61fcd"));
+        let url = new URL(require("ea24c6854ab23f5"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","e5722f93ae490adc":"htM1Y","4929e215f9fb9b8e":"e04H3","a60b98c70ce61fcd":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","ab6016635069926e":"htM1Y","65bef6872557a20a":"e04H3","ea24c6854ab23f5":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39939,10 +39964,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("5674e5f708f2c6d8"));
+        if (!worker) worker = new Worker(require("c99003734a93ec4b"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("b7c1fe84b7b3484f")).toString()
+            url: new URL(require("beb60ea1130a390a")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39968,7 +39993,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","5674e5f708f2c6d8":"35JNJ","b7c1fe84b7b3484f":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","c99003734a93ec4b":"35JNJ","beb60ea1130a390a":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);
