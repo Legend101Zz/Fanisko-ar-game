@@ -597,7 +597,7 @@ const init = () => {
     const gameOverModal = new bootstrap.Modal(
       document.getElementById("gameOverModal"),
       {
-        backdrop: "static", // Prevent clicking outside the modal to close it
+        backdrop: false, // Prevent clicking outside the modal to close it
         keyboard: false, // Prevent using the keyboard to close it
       }
     );
@@ -620,7 +620,7 @@ const init = () => {
     const winnerModal = new bootstrap.Modal(
       document.getElementById("winnerModal"),
       {
-        backdrop: "static", // Prevent clicking outside the modal to close it
+        backdrop: false, // Prevent clicking outside the modal to close it
         keyboard: false, // Prevent using the keyboard to close it
       }
     );

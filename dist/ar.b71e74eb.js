@@ -992,7 +992,7 @@ const init = ()=>{
         // renderer.domElement.remove();
         //@ts-ignore
         const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
-            backdrop: "static",
+            backdrop: false,
             keyboard: false
         });
         const gameOverScore = document.getElementById("gameOverScore");
@@ -1010,7 +1010,7 @@ const init = ()=>{
         // renderer.domElement.remove();
         //@ts-ignore
         const winnerModal = new bootstrap.Modal(document.getElementById("winnerModal"), {
-            backdrop: "static",
+            backdrop: false,
             keyboard: false
         });
         const winnerScore = document.getElementById("winnerScore");
