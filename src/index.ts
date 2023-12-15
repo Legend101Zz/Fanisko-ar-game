@@ -453,7 +453,7 @@ const init = () => {
         const targetPosition = {
           x: ball.position.x + randomX,
           //@ts-ignore
-          y: gltf.scene.position.y - 0.9,
+          y: gltf.scene.position.y - 1.1,
           z: ball.position.z + randomZ,
         }; // Target position
         const throwDuration = 3500; // Animation duration in milliseconds
