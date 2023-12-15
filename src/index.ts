@@ -247,6 +247,7 @@ const init = () => {
     updateLifeIcons(); // Update the displayed life icons
     if (playerLives === 0) {
       // Game over logic (you can implement it here)
+      balls = []; // Clear the balls array so no balls are spwaned at game end
       displayGameOverModal(score);
     }
   }
@@ -299,25 +300,35 @@ const init = () => {
       // HTML element to display the score
       const scoreElement = document.createElement("div");
       scoreElement.innerText = "Score: 0";
-      scoreElement.style.fontSize = "30px";
+      scoreElement.style.fontSize = "20px";
       scoreElement.style.position = "absolute";
-      scoreElement.style.color = "black";
-      scoreElement.style.top = "10px";
-      scoreElement.style.left = "10px";
+      scoreElement.style.color = "white";
+      scoreElement.style.top = "8px";
+      scoreElement.style.left = "8px";
+      scoreElement.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Added semi-transparent black background
+      scoreElement.style.padding = "5px"; // Added padding
+      scoreElement.style.borderRadius = "5px"; // Added border radius for better aesthetics
       document.body.appendChild(scoreElement);
       // Define a variable to keep track of the score
 
       let scoreDisplayTimeout = null;
 
       function showScoreText() {
-        const center = calculateCenterOfScreen();
+        // const center = calculateCenterOfScreen();
         const scoreText = document.createElement("div");
         scoreText.innerText = "Score: " + score;
         scoreText.style.position = "absolute";
-        scoreText.style.color = "red";
-        scoreText.style.fontSize = "48px";
-        scoreText.style.top = center.y - 24 + "px"; // Adjust positioning as needed
-        scoreText.style.left = center.x - 100 + "px"; // Adjust positioning as needed
+        scoreText.style.color = "white"; // Changed text color to white for better visibility on dark background
+        scoreText.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Added semi-transparent black background
+        scoreText.style.padding = "5px"; // Added padding
+        scoreText.style.borderRadius = "5px"; // Added border radius for better aesthetics
+        scoreText.style.fontSize = "30px";
+        // scoreText.style.top = center.y - 24 + "px"; // Adjust positioning as needed
+        // scoreText.style.left = center.x - 100 + "px"; // Adjust positioning as needed
+        scoreText.style.top = "40%";
+        scoreText.style.left = "50%";
+        scoreText.style.transform = "translate(-50%, -50%)";
+
         document.body.appendChild(scoreText);
 
         scoreDisplayTimeout = setTimeout(() => {
@@ -637,6 +648,7 @@ const init = () => {
       if (timerElement) timerElement.textContent = String(countdown);
     } else {
       // Display the game over modal
+      balls = [];
       displayGameOverModal(score);
     }
   }
