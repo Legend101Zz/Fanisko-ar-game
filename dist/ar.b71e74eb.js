@@ -539,11 +539,11 @@ var _gltfloader = require("three/examples/jsm/loaders/GLTFLoader");
 var _tweenJs = require("@tweenjs/tween.js");
 var _tweenJsDefault = parcelHelpers.interopDefault(_tweenJs);
 var _indexCss = require("./index.css");
-const modelPath = new URL(require("965078bf304453ea")).href;
-const imagePath1 = new URL(require("e2b74811ae22f680")).href;
-const imagePath2 = new URL(require("5432e2ffb25a1e0f")).href;
-const imagePath3 = new URL(require("93cdc0b4615c3fbf")).href;
-const imagePath4 = new URL(require("eb1194a91599337c")).href;
+const modelPath = new URL(require("23a30f2358ae680c")).href;
+const imagePath1 = new URL(require("c01634900c492399")).href;
+const imagePath2 = new URL(require("d65a7d8c361b921f")).href;
+const imagePath3 = new URL(require("cbd8154f5091d057")).href;
+const imagePath4 = new URL(require("9e57e8031991b9db")).href;
 // Listen for the popstate event
 window.addEventListener("popstate", handlePopstate);
 //@ts-ignore
@@ -722,8 +722,11 @@ const init = ()=>{
     function playerMissedBall() {
         playerLives--; // Reduce the number of lives
         updateLifeIcons(); // Update the displayed life icons
-        if (playerLives === 0) // Game over logic (you can implement it here)
-        displayGameOverModal(score);
+        if (playerLives === 0) {
+            // Game over logic (you can implement it here)
+            balls = []; // Clear the balls array so no balls are spwaned at game end
+            displayGameOverModal(score);
+        }
     }
     // You can further adjust the light properties, such as shadow casting and shadow resolution, based on your scene requirements.
     directionalLight.castShadow = true; // Enable shadow casting
@@ -765,23 +768,32 @@ const init = ()=>{
         // HTML element to display the score
         const scoreElement = document.createElement("div");
         scoreElement.innerText = "Score: 0";
-        scoreElement.style.fontSize = "30px";
+        scoreElement.style.fontSize = "20px";
         scoreElement.style.position = "absolute";
-        scoreElement.style.color = "black";
-        scoreElement.style.top = "10px";
-        scoreElement.style.left = "10px";
+        scoreElement.style.color = "white";
+        scoreElement.style.top = "8px";
+        scoreElement.style.left = "8px";
+        scoreElement.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Added semi-transparent black background
+        scoreElement.style.padding = "5px"; // Added padding
+        scoreElement.style.borderRadius = "5px"; // Added border radius for better aesthetics
         document.body.appendChild(scoreElement);
         // Define a variable to keep track of the score
         let scoreDisplayTimeout = null;
         function showScoreText() {
-            const center = calculateCenterOfScreen();
+            // const center = calculateCenterOfScreen();
             const scoreText = document.createElement("div");
             scoreText.innerText = "Score: " + score;
             scoreText.style.position = "absolute";
-            scoreText.style.color = "red";
-            scoreText.style.fontSize = "48px";
-            scoreText.style.top = center.y - 24 + "px"; // Adjust positioning as needed
-            scoreText.style.left = center.x - 100 + "px"; // Adjust positioning as needed
+            scoreText.style.color = "white"; // Changed text color to white for better visibility on dark background
+            scoreText.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Added semi-transparent black background
+            scoreText.style.padding = "5px"; // Added padding
+            scoreText.style.borderRadius = "5px"; // Added border radius for better aesthetics
+            scoreText.style.fontSize = "30px";
+            // scoreText.style.top = center.y - 24 + "px"; // Adjust positioning as needed
+            // scoreText.style.left = center.x - 100 + "px"; // Adjust positioning as needed
+            scoreText.style.top = "40%";
+            scoreText.style.left = "50%";
+            scoreText.style.transform = "translate(-50%, -50%)";
             document.body.appendChild(scoreText);
             scoreDisplayTimeout = setTimeout(()=>{
                 document.body.removeChild(scoreText);
@@ -1020,8 +1032,11 @@ const init = ()=>{
         if (countdown > 0) {
             countdown--;
             if (timerElement) timerElement.textContent = String(countdown);
-        } else // Display the game over modal
-        displayGameOverModal(score);
+        } else {
+            // Display the game over modal
+            balls = [];
+            displayGameOverModal(score);
+        }
     }
     window.addEventListener("resize", onWindowResize, false);
     //console.log("scene", scene);
@@ -1085,7 +1100,7 @@ function handlePopstate(event) {
     window.location.reload();
 }
 
-},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","@tweenjs/tween.js":"7DfAI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","e2b74811ae22f680":"9sMm2","5432e2ffb25a1e0f":"6ZnIa","93cdc0b4615c3fbf":"jotub","eb1194a91599337c":"hmGTP","965078bf304453ea":"djv5M","./index.css":"irmnC"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","@zappar/zappar-threejs":"a5Rpw","three/examples/jsm/loaders/GLTFLoader":"dVRsF","@tweenjs/tween.js":"7DfAI","./index.css":"irmnC","23a30f2358ae680c":"djv5M","c01634900c492399":"9sMm2","d65a7d8c361b921f":"6ZnIa","cbd8154f5091d057":"jotub","9e57e8031991b9db":"hmGTP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktPTu":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ACESFilmicToneMapping", ()=>ACESFilmicToneMapping);
@@ -32261,7 +32276,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("2cd7fb00fc8489e2"));
+                let url = new URL(require("e5722f93ae490adc"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), false, false, false, false);
             }),
@@ -32271,7 +32286,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_face on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("2cd7fb00fc8489e2"));
+                let url = new URL(require("e5722f93ae490adc"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, false);
             }),
@@ -32281,7 +32296,7 @@ function initialize(opts) {
                     (0, _loglevel.zcwarn)("attempting to call face_mesh_load_default_full_head_simplified on a destroyed zappar_face_mesh_t");
                     return;
                 }
-                let url = new URL(require("88dcff9febca54a1"));
+                let url = new URL(require("4929e215f9fb9b8e"));
                 let req = yield fetch(url.toString());
                 obj.loadFromMemory((yield req.arrayBuffer()), fillMouth, fillEyeL, fillEyeR, fillNeck);
             }),
@@ -32376,14 +32391,14 @@ function initialize(opts) {
 }
 function loadDefaultFaceModel(o) {
     return __awaiter(this, void 0, void 0, function*() {
-        let url = new URL(require("cd93dfdb1b2d8cf5"));
+        let url = new URL(require("a60b98c70ce61fcd"));
         let data = yield fetch(url.toString());
         let ab = yield data.arrayBuffer();
         client === null || client === void 0 || client.face_tracker_model_load_from_memory(o, ab);
     });
 }
 
-},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","2cd7fb00fc8489e2":"htM1Y","88dcff9febca54a1":"e04H3","cd93dfdb1b2d8cf5":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
+},{"./gen/zappar":"jfa7d","./gen/zappar-client":"5NrpD","./drawplane":"4TyKj","./cameramodel":"999cz","gl-matrix":"1mBhM","./worker-client":"6gLCd","./permission":"5MjeT","./facemesh":"54al1","./pipeline":"7UamN","./camera-source":"alnEs","./html-element-source":"5MqT6","./facelandmark":"5pclE","./compatibility":"6Ict5","./loglevel":"2Cr1D","./sequencesource":"cOpgU","./camera-source-map":"9RjMW","./gfx":"YFGex","./imagetracker":"6l5fH","e5722f93ae490adc":"htM1Y","4929e215f9fb9b8e":"e04H3","a60b98c70ce61fcd":"cPdvO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jfa7d":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "barcode_format_t", ()=>(0, _zapparNative.barcode_format_t));
@@ -39924,10 +39939,10 @@ var __awaiter = undefined && undefined.__awaiter || function(thisArg, _arguments
 let messageManager = new (0, _messages.MsgManager)();
 function launchWorker(worker) {
     return __awaiter(this, void 0, void 0, function*() {
-        if (!worker) worker = new Worker(require("4615ccaf54c91d7c"));
+        if (!worker) worker = new Worker(require("5674e5f708f2c6d8"));
         worker.postMessage({
             t: "wasm",
-            url: new URL(require("222dbe0050287c11")).toString()
+            url: new URL(require("b7c1fe84b7b3484f")).toString()
         });
         yield waitForLoad(worker);
         function sendOutgoing() {
@@ -39953,7 +39968,7 @@ function waitForLoad(w) {
     });
 }
 
-},{"./messages":"hdBLR","4615ccaf54c91d7c":"35JNJ","222dbe0050287c11":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
+},{"./messages":"hdBLR","5674e5f708f2c6d8":"35JNJ","b7c1fe84b7b3484f":"lnG0D","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hdBLR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "MsgManager", ()=>MsgManager);
@@ -55529,7 +55544,10 @@ var exports = {
     update: update
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9sMm2":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"irmnC":[function() {},{}],"djv5M":[function(require,module,exports) {
+module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "gloves.81bd405a.glb" + "?" + Date.now();
+
+},{"./helpers/bundle-url":"lgJ39"}],"9sMm2":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "ball.81b2f7e2.png" + "?" + Date.now();
 
 },{"./helpers/bundle-url":"lgJ39"}],"6ZnIa":[function(require,module,exports) {
@@ -55541,9 +55559,6 @@ module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "ball3.
 },{"./helpers/bundle-url":"lgJ39"}],"hmGTP":[function(require,module,exports) {
 module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "ball4.31f35d1e.png" + "?" + Date.now();
 
-},{"./helpers/bundle-url":"lgJ39"}],"djv5M":[function(require,module,exports) {
-module.exports = require("./helpers/bundle-url").getBundleURL("7UhFu") + "gloves.81bd405a.glb" + "?" + Date.now();
-
-},{"./helpers/bundle-url":"lgJ39"}],"irmnC":[function() {},{}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
+},{"./helpers/bundle-url":"lgJ39"}]},["4cEIE","h7u1C"], "h7u1C", "parcelRequire5ba9")
 
 //# sourceMappingURL=ar.b71e74eb.js.map
