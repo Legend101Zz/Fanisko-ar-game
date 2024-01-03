@@ -810,8 +810,16 @@ const init = ()=>{
             const confetti = document.getElementById("confetti");
             if (confetti) confetti.style.display = "block";
         }
+        function showConfetti2() {
+            const confetti = document.getElementById("confetti2");
+            if (confetti) confetti.style.display = "block";
+        }
         function hideConfetti() {
             const confetti = document.getElementById("confetti");
+            if (confetti) confetti.style.display = "none";
+        }
+        function hideConfetti2() {
+            const confetti = document.getElementById("confetti2");
             if (confetti) confetti.style.display = "none";
         }
         function showScoreText() {
@@ -830,9 +838,11 @@ const init = ()=>{
             scoreText.style.left = "50%";
             scoreText.style.transform = "translate(-50%, -50%)";
             showConfetti();
+            showConfetti2();
             document.body.appendChild(scoreText);
             scoreDisplayTimeout = setTimeout(()=>{
                 hideConfetti();
+                hideConfetti2();
                 document.body.removeChild(scoreText);
             }, 2000); // Remove the score text after 2 seconds
         }
@@ -956,7 +966,7 @@ const init = ()=>{
                 throwCricketBall(randomBall);
             }
         }
-        throwInterval = setInterval(throwRandomBall, 5000);
+        throwInterval = setInterval(throwRandomBall, 6500);
         faceTrackerGroup.add(gltf.scene);
         modelReady = true;
         // Call the updateTimer function every second (1000 milliseconds)
