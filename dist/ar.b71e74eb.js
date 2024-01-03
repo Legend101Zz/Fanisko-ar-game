@@ -568,6 +568,8 @@ const init = ()=>{
     var throwCricketBall;
     var modelReady = false;
     var score = 0;
+    // Add a variable to control whether to render or not
+    var shouldRender = true;
     var renderer = new _three.WebGLRenderer({
         antialias: true,
         preserveDrawingBuffer: true
@@ -1013,6 +1015,7 @@ const init = ()=>{
     // Add these functions for displaying the modals:
     function displayGameOverModal(finalScore) {
         // renderer.domElement.remove();
+        shouldRender = false; // Stop rendering
         //@ts-ignore
         const gameOverModal = new bootstrap.Modal(document.getElementById("gameOverModal"), {
             backdrop: false,
@@ -1030,7 +1033,7 @@ const init = ()=>{
         });
     }
     function displayWinnerModal(finalScore) {
-        // renderer.domElement.remove();
+        shouldRender = false; // Stop rendering
         //@ts-ignore
         const winnerModal = new bootstrap.Modal(document.getElementById("winnerModal"), {
             backdrop: false,
@@ -1093,48 +1096,50 @@ const init = ()=>{
         render();
     }
     function animate() {
-        requestAnimationFrame(animate);
-        // Rotate the balls (for example)
-        scene.children.forEach((child)=>{
-            if (child instanceof _three.Mesh) {
-                child.rotation.x += 0.1;
-                child.rotation.y += 0.1;
-            }
-        });
-        delta = Math.min(clock.getDelta(), 0.1);
-        if (modelReady && balls.length > 0) {
-            checkCollisions(); // Check for collisions
-            updateBoundingBoxes(); // Update bounding boxes' positions
-            //console.log("balls.length", balls.length);
-            // Create a new array to store the balls that will be kept
-            const newBalls = [];
-            // console.log("new_ballss", newBalls);
-            for(let i = 0; i < balls.length; i++){
-                const ball = balls[i];
-                if (ball && ball.userData && typeof ball.userData.hit !== "undefined") {
-                    if (ball.userData.hit === 0) {
-                        // Remove the ball from the scene
-                        scene.remove(ball);
-                        // Remove the ball's bounding box from the array
-                        ballBoundingBoxes.splice(i, 1);
-                        // Update the 'hit' status for that ball to indicate it has been removed
-                        ball.userData.hit = -1;
-                    } else // Keep the ball
-                    newBalls.push(ball);
+        if (shouldRender) {
+            requestAnimationFrame(animate);
+            // Rotate the balls (for example)
+            scene.children.forEach((child)=>{
+                if (child instanceof _three.Mesh) {
+                    child.rotation.x += 0.1;
+                    child.rotation.y += 0.1;
                 }
+            });
+            delta = Math.min(clock.getDelta(), 0.1);
+            if (modelReady && balls.length > 0) {
+                checkCollisions(); // Check for collisions
+                updateBoundingBoxes(); // Update bounding boxes' positions
+                //console.log("balls.length", balls.length);
+                // Create a new array to store the balls that will be kept
+                const newBalls = [];
+                // console.log("new_ballss", newBalls);
+                for(let i = 0; i < balls.length; i++){
+                    const ball = balls[i];
+                    if (ball && ball.userData && typeof ball.userData.hit !== "undefined") {
+                        if (ball.userData.hit === 0) {
+                            // Remove the ball from the scene
+                            scene.remove(ball);
+                            // Remove the ball's bounding box from the array
+                            ballBoundingBoxes.splice(i, 1);
+                            // Update the 'hit' status for that ball to indicate it has been removed
+                            ball.userData.hit = -1;
+                        } else // Keep the ball
+                        newBalls.push(ball);
+                    }
+                }
+                // Replace the old 'balls' array with the new one
+                balls = newBalls;
+            //console.log("balls_array", balls, ballBoundingBoxes);
             }
-            // Replace the old 'balls' array with the new one
-            balls = newBalls;
-        //console.log("balls_array", balls, ballBoundingBoxes);
+            if (score === 6) //console.log("game over");
+            displayWinnerModal(score);
+            else if (balls.length === 0) displayGameOverModal(score);
+            //cannonDebugRenderer.update()
+            camera.updateFrame(renderer);
+            mask.updateFromFaceAnchorGroup(faceTrackerGroup);
+            (0, _tweenJsDefault.default).update();
+            render();
         }
-        if (score === 6) //console.log("game over");
-        displayWinnerModal(score);
-        else if (balls.length === 0) displayGameOverModal(score);
-        //cannonDebugRenderer.update()
-        camera.updateFrame(renderer);
-        mask.updateFromFaceAnchorGroup(faceTrackerGroup);
-        (0, _tweenJsDefault.default).update();
-        render();
     }
     function render() {
         renderer.render(scene, camera);
