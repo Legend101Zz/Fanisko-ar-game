@@ -147,16 +147,24 @@ const init = () => {
   const ballBoundingBoxes: THREE.Box3[] = [];
   const boundingBoxMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     const ball = new THREE.Mesh(
       ballGeometry,
       ballMaterials[i % ballMaterials.length]
     );
-    ball.position.set(
-      -0.757464742660522 + 0.3 * i,
-      0.66717102974653244 + 2,
-      -3.1538567543029785
-    );
+    if (i < 3) {
+      ball.position.set(
+        -0.757464742660522 + 0.3 * i,
+        0.66717102974653244 + 2,
+        -3.1538567543029785
+      );
+    } else {
+      ball.position.set(
+        -0.757464742660522 + 0.3 * (i / 2),
+        0.66717102974653244 + 2,
+        -3.1538567543029785
+      );
+    }
     ball.frustumCulled = false;
     ball.visible = false;
     scene.add(ball);
@@ -547,7 +555,7 @@ const init = () => {
         }
       }
 
-      throwInterval = setInterval(throwRandomBall, 6500);
+      throwInterval = setInterval(throwRandomBall, 6800);
 
       faceTrackerGroup.add(gltf.scene);
       modelReady = true;
@@ -757,7 +765,7 @@ const init = () => {
       balls = newBalls;
       //console.log("balls_array", balls, ballBoundingBoxes);
     }
-    if (balls.length === 0 && score === 6) {
+    if (score === 6) {
       //console.log("game over");
       displayWinnerModal(score);
     } else if (balls.length === 0) {
