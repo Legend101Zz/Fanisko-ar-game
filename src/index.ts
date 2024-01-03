@@ -252,6 +252,7 @@ const init = () => {
   document.body.appendChild(missedTextElement);
 
   function showMissedText() {
+    missedTextElement.style.display = "flex";
     missedTextElement.innerText = "Missed!";
     missedTextElement.style.position = "absolute";
     missedTextElement.style.color = "white";
@@ -265,6 +266,7 @@ const init = () => {
 
     setTimeout(() => {
       missedTextElement.innerText = "";
+      missedTextElement.style.display = "none";
     }, 2000); // Remove the missed text after 2 seconds
   }
 

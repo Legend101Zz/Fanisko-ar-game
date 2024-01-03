@@ -728,6 +728,7 @@ const init = ()=>{
     missedTextElement.style.transform = "translateX(-50%)";
     document.body.appendChild(missedTextElement);
     function showMissedText() {
+        missedTextElement.style.display = "flex";
         missedTextElement.innerText = "Missed!";
         missedTextElement.style.position = "absolute";
         missedTextElement.style.color = "white";
@@ -740,6 +741,7 @@ const init = ()=>{
         missedTextElement.style.transform = "translate(-50%, -50%)";
         setTimeout(()=>{
             missedTextElement.innerText = "";
+            missedTextElement.style.display = "none";
         }, 2000); // Remove the missed text after 2 seconds
     }
     // Call this function when the player misses the ball to reduce a life
@@ -896,7 +898,7 @@ const init = ()=>{
             const targetPosition = {
                 x: ball.position.x + randomX,
                 //@ts-ignore
-                y: gltf.scene.position.y - 0.9,
+                y: gltf.scene.position.y - 1.1,
                 z: ball.position.z + randomZ
             }; // Target position
             const throwDuration = 3500; // Animation duration in milliseconds
