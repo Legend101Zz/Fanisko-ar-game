@@ -806,6 +806,14 @@ const init = ()=>{
         document.body.appendChild(scoreElement);
         // Define a variable to keep track of the score
         let scoreDisplayTimeout = null;
+        function showConfetti() {
+            const confetti = document.getElementById("confetti");
+            if (confetti) confetti.style.display = "block";
+        }
+        function hideConfetti() {
+            const confetti = document.getElementById("confetti");
+            if (confetti) confetti.style.display = "none";
+        }
         function showScoreText() {
             // const center = calculateCenterOfScreen();
             const scoreText = document.createElement("div");
@@ -821,8 +829,10 @@ const init = ()=>{
             scoreText.style.top = "40%";
             scoreText.style.left = "50%";
             scoreText.style.transform = "translate(-50%, -50%)";
+            showConfetti();
             document.body.appendChild(scoreText);
             scoreDisplayTimeout = setTimeout(()=>{
+                hideConfetti();
                 document.body.removeChild(scoreText);
             }, 2000); // Remove the score text after 2 seconds
         }

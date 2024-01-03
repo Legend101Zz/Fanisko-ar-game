@@ -220,4 +220,26 @@ html, body {
   opacity: 1;
 }
 
+#confetti {
+  width: 0;
+  height: 0;
+  border-bottom: 20px solid red;
+  border-left: 10px solid #0000;
+  border-right: 10px solid #0000;
+  animation: blast 3s ease-out infinite;
+  position: relative;
+}
+
+@keyframes blast {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
 /*# sourceMappingURL=index.61d3354a.css.map */

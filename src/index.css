@@ -253,3 +253,24 @@ body {
 .cards-placeholder__item--active {
   opacity: 1;
 }
+
+#confetti {
+  position: relative;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid #f00;
+  animation: blast 3s ease-out infinite;
+}
+
+@keyframes blast {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
