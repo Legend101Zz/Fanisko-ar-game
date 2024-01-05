@@ -1083,7 +1083,7 @@ const init = ()=>{
         if (countdown > 0) {
             countdown--;
             if (timerElement) timerElement.textContent = String(countdown);
-        } else {
+        } else if (countdown <= 0 && score != 1) {
             // Display the game over modal
             balls = [];
             displayGameOverModal(score);
