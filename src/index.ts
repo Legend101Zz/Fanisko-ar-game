@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as ZapparThree from "@zappar/zappar-threejs";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import TWEEN from "@tweenjs/tween.js";
+import { Howl } from "howler";
 import "./index.css";
 
 const modelPath = new URL("../assets/gloves.glb", import.meta.url).href;
@@ -9,6 +10,8 @@ const imagePath1 = new URL("../assets/images/ball.png", import.meta.url).href;
 const imagePath2 = new URL("../assets/images/ball2.png", import.meta.url).href;
 const imagePath3 = new URL("../assets/images/ball3.png", import.meta.url).href;
 const imagePath4 = new URL("../assets/images/ball4.png", import.meta.url).href;
+const MissMusic = new URL("../assets/boo.mp3", import.meta.url).href;
+const HitMusic = new URL("../assets/whistle.mp3", import.meta.url).href;
 
 // Listen for the popstate event
 window.addEventListener("popstate", handlePopstate);
@@ -43,6 +46,16 @@ const init = () => {
   var score = 0;
   // Add a variable to control whether to render or not
   var shouldRender = true;
+
+  //sound
+
+  const soundMiss = new Howl({
+    src: [MissMusic],
+  });
+
+  const soundHit = new Howl({
+    src: [HitMusic],
+  });
 
   var renderer = new THREE.WebGLRenderer({
     antialias: true,
@@ -285,6 +298,7 @@ const init = () => {
     playerLives--; // Reduce the number of lives
     updateLifeIcons(); // Update the displayed life icons
     showMissedText();
+    soundMiss.play();
     if (playerLives === 0) {
       // Game over logic (you can implement it here)
       balls = []; // Clear the balls array so no balls are spwaned at game end
@@ -390,6 +404,7 @@ const init = () => {
         scoreText.style.transform = "translate(-50%, -50%)";
         showConfetti();
         showConfetti2();
+        soundHit.play();
         document.body.appendChild(scoreText);
 
         scoreDisplayTimeout = setTimeout(() => {
