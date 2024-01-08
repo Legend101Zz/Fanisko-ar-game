@@ -13,6 +13,16 @@ const imagePath4 = new URL("../assets/images/ball4.png", import.meta.url).href;
 const MissMusic = new URL("../assets/boo.mp3", import.meta.url).href;
 const HitMusic = new URL("../assets/whistle.mp3", import.meta.url).href;
 
+const soundMiss = new Howl({
+  src: [MissMusic],
+  html5: true,
+});
+
+const soundHit = new Howl({
+  src: [HitMusic],
+  html5: true,
+});
+
 // Listen for the popstate event
 window.addEventListener("popstate", handlePopstate);
 //@ts-ignore
@@ -48,16 +58,6 @@ const init = () => {
   var shouldRender = true;
 
   //sound
-
-  const soundMiss = new Howl({
-    src: [MissMusic],
-    html5: true,
-  });
-
-  const soundHit = new Howl({
-    src: [HitMusic],
-    html5: true,
-  });
 
   var renderer = new THREE.WebGLRenderer({
     antialias: true,
