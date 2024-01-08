@@ -51,10 +51,12 @@ const init = () => {
 
   const soundMiss = new Howl({
     src: [MissMusic],
+    html5: true,
   });
 
   const soundHit = new Howl({
     src: [HitMusic],
+    html5: true,
   });
 
   var renderer = new THREE.WebGLRenderer({
@@ -402,14 +404,18 @@ const init = () => {
         scoreText.style.top = "40%";
         scoreText.style.left = "50%";
         scoreText.style.transform = "translate(-50%, -50%)";
-        showConfetti();
-        showConfetti2();
+        if (score < 5) {
+          showConfetti();
+          showConfetti2();
+        }
         soundHit.play();
         document.body.appendChild(scoreText);
 
         scoreDisplayTimeout = setTimeout(() => {
-          hideConfetti();
-          hideConfetti2();
+          if (score < 5) {
+            hideConfetti();
+            hideConfetti2();
+          }
           document.body.removeChild(scoreText);
         }, 2000); // Remove the score text after 2 seconds
       }
@@ -652,8 +658,7 @@ const init = () => {
         keyboard: false, // Prevent using the keyboard to close it
       }
     );
-    const gameOverScore = document.getElementById("gameOverScore");
-    if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
+
     gameOverModal.show();
     //@ts-ignore
     document.querySelector("#playEnded").addEventListener("click", (e) => {
@@ -791,7 +796,7 @@ const init = () => {
       if (score === 6) {
         //console.log("game over");
         displayWinnerModal(score);
-      } else if (balls.length === 0) {
+      } else if (balls.length === 0 && score != 6) {
         displayGameOverModal(score);
       }
       //cannonDebugRenderer.update()

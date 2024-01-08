@@ -577,12 +577,14 @@ const init = ()=>{
     const soundMiss = new (0, _howler.Howl)({
         src: [
             MissMusic
-        ]
+        ],
+        html5: true
     });
     const soundHit = new (0, _howler.Howl)({
         src: [
             HitMusic
-        ]
+        ],
+        html5: true
     });
     var renderer = new _three.WebGLRenderer({
         antialias: true,
@@ -855,13 +857,17 @@ const init = ()=>{
             scoreText.style.top = "40%";
             scoreText.style.left = "50%";
             scoreText.style.transform = "translate(-50%, -50%)";
-            showConfetti();
-            showConfetti2();
+            if (score < 5) {
+                showConfetti();
+                showConfetti2();
+            }
             soundHit.play();
             document.body.appendChild(scoreText);
             scoreDisplayTimeout = setTimeout(()=>{
-                hideConfetti();
-                hideConfetti2();
+                if (score < 5) {
+                    hideConfetti();
+                    hideConfetti2();
+                }
                 document.body.removeChild(scoreText);
             }, 2000); // Remove the score text after 2 seconds
         }
@@ -1037,8 +1043,6 @@ const init = ()=>{
             backdrop: false,
             keyboard: false
         });
-        const gameOverScore = document.getElementById("gameOverScore");
-        if (gameOverScore) gameOverScore.textContent = `Your Score: ${finalScore}`;
         gameOverModal.show();
         //@ts-ignore
         document.querySelector("#playEnded").addEventListener("click", (e)=>{
