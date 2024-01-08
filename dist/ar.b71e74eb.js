@@ -547,6 +547,18 @@ const imagePath3 = new URL(require("b8312be3bde2b03a")).href;
 const imagePath4 = new URL(require("aa2b0fe4fe6dde06")).href;
 const MissMusic = new URL(require("b409f49357a39acd")).href;
 const HitMusic = new URL(require("8052565a9707cc83")).href;
+const soundMiss = new (0, _howler.Howl)({
+    src: [
+        MissMusic
+    ],
+    html5: true
+});
+const soundHit = new (0, _howler.Howl)({
+    src: [
+        HitMusic
+    ],
+    html5: true
+});
 // Listen for the popstate event
 window.addEventListener("popstate", handlePopstate);
 //@ts-ignore
@@ -574,18 +586,6 @@ const init = ()=>{
     // Add a variable to control whether to render or not
     var shouldRender = true;
     //sound
-    const soundMiss = new (0, _howler.Howl)({
-        src: [
-            MissMusic
-        ],
-        html5: true
-    });
-    const soundHit = new (0, _howler.Howl)({
-        src: [
-            HitMusic
-        ],
-        html5: true
-    });
     var renderer = new _three.WebGLRenderer({
         antialias: true,
         preserveDrawingBuffer: true
@@ -1153,7 +1153,7 @@ const init = ()=>{
             }
             if (score === 6) //console.log("game over");
             displayWinnerModal(score);
-            else if (balls.length === 0) displayGameOverModal(score);
+            else if (balls.length === 0 && score != 6) displayGameOverModal(score);
             //cannonDebugRenderer.update()
             camera.updateFrame(renderer);
             mask.updateFromFaceAnchorGroup(faceTrackerGroup);
